@@ -16,9 +16,10 @@
             prefHeight="600"
             styleClass="chat-container">
 
-    <!-- =========================
-         TOP HEADER
-         ========================= -->
+
+    <!-- ===================================================== -->
+    <!-- HEADER -->
+    <!-- ===================================================== -->
 
     <top>
 
@@ -27,20 +28,26 @@
               styleClass="chat-header">
 
             <padding>
+
                 <Insets top="15"
                         right="20"
                         bottom="15"
                         left="20"/>
+
             </padding>
+
 
             <Label text="💬 CHAT APPLICATION"
                    styleClass="header-title"/>
+
 
             <Label fx:id="welcomeLabel"
                    text="Welcome!"
                    styleClass="welcome-label"/>
 
+
             <HBox HBox.hgrow="ALWAYS"/>
+
 
             <Button text="LOGOUT"
                     onAction="#handleLogout"
@@ -51,9 +58,9 @@
     </top>
 
 
-    <!-- =========================
-         LEFT SIDEBAR
-         ========================= -->
+    <!-- ===================================================== -->
+    <!-- LEFT SIDEBAR -->
+    <!-- ===================================================== -->
 
     <left>
 
@@ -62,21 +69,48 @@
               styleClass="sidebar">
 
             <padding>
+
                 <Insets top="20"
                         right="15"
                         bottom="20"
                         left="15"/>
+
             </padding>
+
+
+            <!-- ================================================= -->
+            <!-- USERS -->
+            <!-- ================================================= -->
 
             <Label text="USERS"
                    styleClass="section-title"/>
+
 
             <ListView fx:id="userListView"
                       VBox.vgrow="ALWAYS"
                       styleClass="user-list"/>
 
-            <Label text="GROUPS"
-                   styleClass="section-title"/>
+
+            <!-- ================================================= -->
+            <!-- GROUPS -->
+            <!-- ================================================= -->
+
+            <HBox alignment="CENTER_LEFT"
+                  spacing="10">
+
+                <Label text="GROUPS"
+                       styleClass="section-title"
+                       HBox.hgrow="ALWAYS"/>
+
+
+                <Button text="+"
+                        onAction="#handleCreateGroup"
+                        styleClass="create-group-button"
+                        prefWidth="35"
+                        prefHeight="30"/>
+
+            </HBox>
+
 
             <ListView fx:id="groupListView"
                       prefHeight="150"
@@ -87,18 +121,18 @@
     </left>
 
 
-    <!-- =========================
-         CHAT AREA
-         ========================= -->
+    <!-- ===================================================== -->
+    <!-- CHAT AREA -->
+    <!-- ===================================================== -->
 
     <center>
 
         <BorderPane styleClass="conversation-container">
 
 
-            <!-- =========================
-                 CHAT HEADER
-                 ========================= -->
+            <!-- ================================================= -->
+            <!-- CHAT HEADER -->
+            <!-- ================================================= -->
 
             <top>
 
@@ -107,24 +141,44 @@
                       styleClass="conversation-header">
 
                     <padding>
+
                         <Insets top="15"
                                 right="20"
                                 bottom="15"
                                 left="20"/>
+
                     </padding>
+
+
+                    <!-- CHAT TITLE -->
 
                     <Label fx:id="chatTitleLabel"
                            text="Select a user to start chatting"
                            styleClass="chat-title"/>
+
+
+                    <!-- SPACER -->
+
+                    <HBox HBox.hgrow="ALWAYS"/>
+
+
+                    <!-- MEMBERS BUTTON -->
+
+                    <Button fx:id="membersButton"
+                            text="MEMBERS"
+                            onAction="#handleViewMembers"
+                            visible="false"
+                            managed="false"
+                            styleClass="members-button"/>
 
                 </HBox>
 
             </top>
 
 
-            <!-- =========================
-                 MESSAGE LIST
-                 ========================= -->
+            <!-- ================================================= -->
+            <!-- MESSAGES -->
+            <!-- ================================================= -->
 
             <center>
 
@@ -134,9 +188,9 @@
             </center>
 
 
-            <!-- =========================
-                 MESSAGE INPUT
-                 ========================= -->
+            <!-- ================================================= -->
+            <!-- MESSAGE INPUT -->
+            <!-- ================================================= -->
 
             <bottom>
 
@@ -145,18 +199,21 @@
                       styleClass="message-input-area">
 
                     <padding>
+
                         <Insets top="15"
                                 right="15"
                                 bottom="15"
                                 left="15"/>
+
                     </padding>
+
 
                     <TextField fx:id="messageField"
                                promptText="Type your message..."
                                HBox.hgrow="ALWAYS"
                                styleClass="message-field"/>
 
-                    <!-- SEND BUTTON -->
+
                     <Button text="SEND"
                             onAction="#handleSendMessage"
                             styleClass="send-button"/>
@@ -165,8 +222,10 @@
 
             </bottom>
 
+
         </BorderPane>
 
     </center>
+
 
 </BorderPane>

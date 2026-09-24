@@ -1,6 +1,9 @@
+C:\Users\Admin\Downloads\chat-application\src\main\java\com\chatapp\client\ChatSocketClient.java
 C:\Users\Admin\Downloads\chat-application\src\main\java\com\chatapp\controller\ChatController.java
 C:\Users\Admin\Downloads\chat-application\src\main\java\com\chatapp\controller\LoginController.java
 C:\Users\Admin\Downloads\chat-application\src\main\java\com\chatapp\controller\RegisterController.java
+C:\Users\Admin\Downloads\chat-application\src\main\java\com\chatapp\dao\GroupDAO.java
+C:\Users\Admin\Downloads\chat-application\src\main\java\com\chatapp\dao\GroupMessageDAO.java
 C:\Users\Admin\Downloads\chat-application\src\main\java\com\chatapp\dao\MessageDAO.java
 C:\Users\Admin\Downloads\chat-application\src\main\java\com\chatapp\dao\MessageDAOTest.java
 C:\Users\Admin\Downloads\chat-application\src\main\java\com\chatapp\dao\UserDAO.java
@@ -8,6 +11,8 @@ C:\Users\Admin\Downloads\chat-application\src\main\java\com\chatapp\dao\UserDAOT
 C:\Users\Admin\Downloads\chat-application\src\main\java\com\chatapp\database\DatabaseConnection.java
 C:\Users\Admin\Downloads\chat-application\src\main\java\com\chatapp\database\DatabaseTest.java
 C:\Users\Admin\Downloads\chat-application\src\main\java\com\chatapp\Main.java
+C:\Users\Admin\Downloads\chat-application\src\main\java\com\chatapp\model\Group.java
+C:\Users\Admin\Downloads\chat-application\src\main\java\com\chatapp\model\GroupMessage.java
 C:\Users\Admin\Downloads\chat-application\src\main\java\com\chatapp\model\Message.java
 C:\Users\Admin\Downloads\chat-application\src\main\java\com\chatapp\model\User.java
 C:\Users\Admin\Downloads\chat-application\src\main\java\com\chatapp\server\ChatClientTest.java

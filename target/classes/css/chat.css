@@ -1,10 +1,15 @@
+/* =========================================================
+   MAIN CHAT WINDOW
+   ========================================================= */
+
 .chat-container {
     -fx-background-color: #f4f7fb;
 }
 
-/* =========================
-   HEADER
-   ========================= */
+
+/* =========================================================
+   TOP HEADER
+   ========================================================= */
 
 .chat-header {
     -fx-background-color: #2563eb;
@@ -35,9 +40,10 @@
     -fx-background-color: #e5e7eb;
 }
 
-/* =========================
-   SIDEBAR
-   ========================= */
+
+/* =========================================================
+   LEFT SIDEBAR
+   ========================================================= */
 
 .sidebar {
     -fx-background-color: white;
@@ -50,6 +56,11 @@
     -fx-font-weight: bold;
     -fx-text-fill: #6b7280;
 }
+
+
+/* =========================================================
+   USER / GROUP LIST
+   ========================================================= */
 
 .user-list,
 .group-list {
@@ -71,12 +82,13 @@
     -fx-text-fill: #1d4ed8;
 }
 
-/* =========================
-   CONVERSATION
-   ========================= */
+
+/* =========================================================
+   CONVERSATION AREA
+   ========================================================= */
 
 .conversation-container {
-    -fx-background-color: #f9fafb;
+    -fx-background-color: #f8fafc;
 }
 
 .conversation-header {
@@ -91,50 +103,182 @@
     -fx-text-fill: #111827;
 }
 
+
+/* =========================================================
+   MESSAGE LIST
+   ========================================================= */
+
 .message-list {
-    -fx-background-color: #f9fafb;
+    -fx-background-color: #f8fafc;
     -fx-border-color: transparent;
 }
 
 .message-list .list-cell {
     -fx-background-color: transparent;
     -fx-padding: 8px 15px;
-    -fx-font-size: 14px;
 }
 
-/* =========================
-   MESSAGE INPUT
-   ========================= */
+
+/* Remove default selected background */
+
+.message-list .list-cell:selected {
+    -fx-background-color: transparent;
+}
+
+
+/* =========================================================
+   SENT MESSAGE BUBBLE
+   ========================================================= */
+
+.sent-bubble {
+    -fx-background-color: #2563eb;
+
+    -fx-background-radius:
+        18px 18px 4px 18px;
+
+    -fx-padding:
+        10px 14px 7px 14px;
+
+    -fx-max-width: 400px;
+}
+
+
+/* =========================================================
+   RECEIVED MESSAGE BUBBLE
+   ========================================================= */
+
+.received-bubble {
+    -fx-background-color: white;
+
+    -fx-border-color: #e5e7eb;
+
+    -fx-border-width: 1px;
+
+    -fx-background-radius:
+        18px 18px 18px 4px;
+
+    -fx-border-radius:
+        18px 18px 18px 4px;
+
+    -fx-padding:
+        10px 14px 7px 14px;
+
+    -fx-max-width: 400px;
+}
+
+
+/* =========================================================
+   SENT MESSAGE TEXT
+   ========================================================= */
+
+.sent-message {
+    -fx-text-fill: white;
+
+    -fx-font-size: 14px;
+
+    -fx-font-weight: normal;
+}
+
+
+/* =========================================================
+   RECEIVED MESSAGE TEXT
+   ========================================================= */
+
+.received-message {
+    -fx-text-fill: #111827;
+
+    -fx-font-size: 14px;
+
+    -fx-font-weight: normal;
+}
+
+
+/* =========================================================
+   MESSAGE TIME
+   ========================================================= */
+
+.message-time {
+    -fx-font-size: 10px;
+    -fx-font-weight: normal;
+}
+
+
+/* Sent timestamp */
+
+.sent-bubble .message-time {
+    -fx-text-fill: #dbeafe;
+}
+
+
+/* Received timestamp */
+
+.received-bubble .message-time {
+    -fx-text-fill: #9ca3af;
+}
+
+
+/* =========================================================
+   MESSAGE INPUT AREA
+   ========================================================= */
 
 .message-input-area {
     -fx-background-color: white;
+
     -fx-border-color: #e5e7eb;
+
     -fx-border-width: 1px 0 0 0;
 }
 
+
+/* =========================================================
+   MESSAGE TEXT FIELD
+   ========================================================= */
+
 .message-field {
     -fx-background-color: #f3f4f6;
+
     -fx-border-color: #d1d5db;
-    -fx-border-radius: 8px;
-    -fx-background-radius: 8px;
+
+    -fx-border-radius: 10px;
+
+    -fx-background-radius: 10px;
+
     -fx-padding: 12px;
+
     -fx-font-size: 14px;
 }
 
 .message-field:focused {
     -fx-border-color: #2563eb;
+
+    -fx-background-color: white;
 }
+
+
+/* =========================================================
+   SEND BUTTON
+   ========================================================= */
 
 .send-button {
     -fx-background-color: #2563eb;
+
     -fx-text-fill: white;
+
     -fx-font-size: 13px;
+
     -fx-font-weight: bold;
-    -fx-background-radius: 8px;
+
+    -fx-background-radius: 10px;
+
     -fx-padding: 12px 20px;
+
     -fx-cursor: hand;
 }
 
 .send-button:hover {
     -fx-background-color: #1d4ed8;
+}
+
+.send-button:pressed {
+    -fx-background-color: #1e40af;
 }

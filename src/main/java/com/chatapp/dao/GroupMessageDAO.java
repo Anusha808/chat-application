@@ -1,7 +1,7 @@
 package com.chatapp.dao;
 
 import com.chatapp.database.DatabaseConnection;
-import com.chatapp.model.Message;
+import com.chatapp.model.GroupMessage;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -11,14 +11,14 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MessageDAO {
+public class GroupMessageDAO {
 
-    // Save a new message
-    public boolean saveMessage(Message message) {
+    // Save a group message
+    public boolean saveMessage(GroupMessage message) {
 
         String sql = """
-                INSERT INTO messages
-                (sender_id, receiver_id, message, is_read)
+                INSERT INTO group_messages
+                (group_id, sender_id, message, is_read)
                 VALUES (?, ?, ?, FALSE)
                 """;
 
@@ -29,12 +29,12 @@ public class MessageDAO {
 
             statement.setInt(
                     1,
-                    message.getSenderId()
+                    message.getGroupId()
             );
 
             statement.setInt(
                     2,
-                    message.getReceiverId()
+                    message.getSenderId()
             );
 
             statement.setString(
@@ -50,7 +50,7 @@ public class MessageDAO {
         } catch (SQLException e) {
 
             System.out.println(
-                    "Error saving message: "
+                    "Error saving group message: "
                             + e.getMessage()
             );
 
@@ -58,27 +58,23 @@ public class MessageDAO {
         }
     }
 
-
-    // Load chat history
-    public List<Message> getChatHistory(
-            int userId,
-            int otherUserId
+    // Load group chat history
+    public List<GroupMessage> getGroupMessages(
+            int groupId
     ) {
 
-        List<Message> messages =
+        List<GroupMessage> messages =
                 new ArrayList<>();
 
         String sql = """
-                SELECT id,
-                       sender_id,
-                       receiver_id,
-                       message,
-                       sent_at
-                FROM messages
-                WHERE
-                    (sender_id = ? AND receiver_id = ?)
-                    OR
-                    (sender_id = ? AND receiver_id = ?)
+                SELECT
+                    id,
+                    group_id,
+                    sender_id,
+                    message,
+                    sent_at
+                FROM group_messages
+                WHERE group_id = ?
                 ORDER BY sent_at ASC
                 """;
 
@@ -87,10 +83,10 @@ public class MessageDAO {
              PreparedStatement statement =
                      connection.prepareStatement(sql)) {
 
-            statement.setInt(1, userId);
-            statement.setInt(2, otherUserId);
-            statement.setInt(3, otherUserId);
-            statement.setInt(4, userId);
+            statement.setInt(
+                    1,
+                    groupId
+            );
 
             ResultSet resultSet =
                     statement.executeQuery();
@@ -98,15 +94,20 @@ public class MessageDAO {
             while (resultSet.next()) {
 
                 Timestamp timestamp =
-                        resultSet.getTimestamp("sent_at");
+                        resultSet.getTimestamp(
+                                "sent_at"
+                        );
 
-                Message message = new Message(
-                        resultSet.getInt("id"),
-                        resultSet.getInt("sender_id"),
-                        resultSet.getInt("receiver_id"),
-                        resultSet.getString("message"),
-                        timestamp.toLocalDateTime()
-                );
+                GroupMessage message =
+                        new GroupMessage(
+                                resultSet.getInt("id"),
+                                resultSet.getInt("group_id"),
+                                resultSet.getInt("sender_id"),
+                                resultSet.getString("message"),
+                                timestamp != null
+                                        ? timestamp.toLocalDateTime()
+                                        : null
+                        );
 
                 messages.add(message);
             }
@@ -114,7 +115,7 @@ public class MessageDAO {
         } catch (SQLException e) {
 
             System.out.println(
-                    "Error loading chat history: "
+                    "Error loading group messages: "
                             + e.getMessage()
             );
         }
@@ -122,18 +123,32 @@ public class MessageDAO {
         return messages;
     }
 
-
-    // Get unread message count
+    // Get unread messages in a group
     public int getUnreadCount(
-            int receiverId,
-            int senderId
+            int groupId,
+            int userId
     ) {
+
+        /*
+         * A message is unread for a user when:
+         *
+         * 1. It belongs to the selected group.
+         * 2. The sender is not the current user.
+         * 3. is_read is FALSE.
+         *
+         * NOTE:
+         * This simple implementation uses the shared
+         * is_read column. Later, we can improve this
+         * with a separate group_message_reads table
+         * so every group member has an independent
+         * read status.
+         */
 
         String sql = """
                 SELECT COUNT(*)
-                FROM messages
-                WHERE receiver_id = ?
-                AND sender_id = ?
+                FROM group_messages
+                WHERE group_id = ?
+                AND sender_id <> ?
                 AND is_read = FALSE
                 """;
 
@@ -142,8 +157,15 @@ public class MessageDAO {
              PreparedStatement statement =
                      connection.prepareStatement(sql)) {
 
-            statement.setInt(1, receiverId);
-            statement.setInt(2, senderId);
+            statement.setInt(
+                    1,
+                    groupId
+            );
+
+            statement.setInt(
+                    2,
+                    userId
+            );
 
             ResultSet resultSet =
                     statement.executeQuery();
@@ -156,7 +178,7 @@ public class MessageDAO {
         } catch (SQLException e) {
 
             System.out.println(
-                    "Error getting unread count: "
+                    "Error getting group unread count: "
                             + e.getMessage()
             );
         }
@@ -164,18 +186,17 @@ public class MessageDAO {
         return 0;
     }
 
-
-    // Mark messages as read
+    // Mark group messages as read
     public void markMessagesAsRead(
-            int receiverId,
-            int senderId
+            int groupId,
+            int userId
     ) {
 
         String sql = """
-                UPDATE messages
+                UPDATE group_messages
                 SET is_read = TRUE
-                WHERE receiver_id = ?
-                AND sender_id = ?
+                WHERE group_id = ?
+                AND sender_id <> ?
                 AND is_read = FALSE
                 """;
 
@@ -184,15 +205,22 @@ public class MessageDAO {
              PreparedStatement statement =
                      connection.prepareStatement(sql)) {
 
-            statement.setInt(1, receiverId);
-            statement.setInt(2, senderId);
+            statement.setInt(
+                    1,
+                    groupId
+            );
+
+            statement.setInt(
+                    2,
+                    userId
+            );
 
             statement.executeUpdate();
 
         } catch (SQLException e) {
 
             System.out.println(
-                    "Error marking messages as read: "
+                    "Error marking group messages as read: "
                             + e.getMessage()
             );
         }
