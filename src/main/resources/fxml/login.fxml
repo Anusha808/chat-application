@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox xmlns="http://javafx.com/javafx/21"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.chatapp.controller.LoginController"
+      alignment="CENTER"
+      spacing="15"
+      prefWidth="400"
+      prefHeight="500"
+      styleClass="login-container">
+
+    <padding>
+        <Insets top="40"
+                right="40"
+                bottom="40"
+                left="40"/>
+    </padding>
+
+    <!-- Application Title -->
+    <Label text="CHAT APPLICATION"
+           styleClass="title-label"/>
+
+    <!-- Welcome Message -->
+    <Label text="Welcome Back!"
+           styleClass="subtitle-label"/>
+
+    <!-- Username -->
+    <TextField fx:id="usernameField"
+               promptText="Username"
+               maxWidth="280"
+               styleClass="input-field"/>
+
+    <!-- Password -->
+    <PasswordField fx:id="passwordField"
+                   promptText="Password"
+                   maxWidth="280"
+                   styleClass="input-field"/>
+
+    <!-- Login Button -->
+    <Button text="LOGIN"
+            onAction="#handleLogin"
+            prefWidth="280"
+            styleClass="login-button"/>
+
+    <!-- Login Message -->
+    <Label fx:id="messageLabel"
+           text=""
+           wrapText="true"
+           maxWidth="280"
+           styleClass="message-label"/>
+
+    <!-- Register Button -->
+    <Button text="Don't have an account? Register"
+            onAction="#openRegisterPage"
+            styleClass="register-link-button"/>
+
+</VBox>

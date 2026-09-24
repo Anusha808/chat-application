@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane xmlns="http://javafx.com/javafx/21"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.chatapp.controller.ChatController"
+            prefWidth="900"
+            prefHeight="600"
+            styleClass="chat-container">
+
+    <!-- =========================
+         TOP HEADER
+         ========================= -->
+
+    <top>
+
+        <HBox alignment="CENTER_LEFT"
+              spacing="15"
+              styleClass="chat-header">
+
+            <padding>
+                <Insets top="15"
+                        right="20"
+                        bottom="15"
+                        left="20"/>
+            </padding>
+
+            <Label text="💬 CHAT APPLICATION"
+                   styleClass="header-title"/>
+
+            <Label fx:id="welcomeLabel"
+                   text="Welcome!"
+                   styleClass="welcome-label"/>
+
+            <HBox HBox.hgrow="ALWAYS"/>
+
+            <Button text="LOGOUT"
+                    onAction="#handleLogout"
+                    styleClass="logout-button"/>
+
+        </HBox>
+
+    </top>
+
+
+    <!-- =========================
+         LEFT SIDEBAR
+         ========================= -->
+
+    <left>
+
+        <VBox prefWidth="220"
+              spacing="10"
+              styleClass="sidebar">
+
+            <padding>
+                <Insets top="20"
+                        right="15"
+                        bottom="20"
+                        left="15"/>
+            </padding>
+
+            <Label text="USERS"
+                   styleClass="section-title"/>
+
+            <ListView fx:id="userListView"
+                      VBox.vgrow="ALWAYS"
+                      styleClass="user-list"/>
+
+            <Label text="GROUPS"
+                   styleClass="section-title"/>
+
+            <ListView fx:id="groupListView"
+                      prefHeight="150"
+                      styleClass="group-list"/>
+
+        </VBox>
+
+    </left>
+
+
+    <!-- =========================
+         CHAT AREA
+         ========================= -->
+
+    <center>
+
+        <BorderPane styleClass="conversation-container">
+
+
+            <!-- =========================
+                 CHAT HEADER
+                 ========================= -->
+
+            <top>
+
+                <HBox alignment="CENTER_LEFT"
+                      spacing="10"
+                      styleClass="conversation-header">
+
+                    <padding>
+                        <Insets top="15"
+                                right="20"
+                                bottom="15"
+                                left="20"/>
+                    </padding>
+
+                    <Label fx:id="chatTitleLabel"
+                           text="Select a user to start chatting"
+                           styleClass="chat-title"/>
+
+                </HBox>
+
+            </top>
+
+
+            <!-- =========================
+                 MESSAGE LIST
+                 ========================= -->
+
+            <center>
+
+                <ListView fx:id="messageListView"
+                          styleClass="message-list"/>
+
+            </center>
+
+
+            <!-- =========================
+                 MESSAGE INPUT
+                 ========================= -->
+
+            <bottom>
+
+                <HBox spacing="10"
+                      alignment="CENTER"
+                      styleClass="message-input-area">
+
+                    <padding>
+                        <Insets top="15"
+                                right="15"
+                                bottom="15"
+                                left="15"/>
+                    </padding>
+
+                    <TextField fx:id="messageField"
+                               promptText="Type your message..."
+                               HBox.hgrow="ALWAYS"
+                               styleClass="message-field"/>
+
+                    <!-- SEND BUTTON -->
+                    <Button text="SEND"
+                            onAction="#handleSendMessage"
+                            styleClass="send-button"/>
+
+                </HBox>
+
+            </bottom>
+
+        </BorderPane>
+
+    </center>
+
+</BorderPane>
