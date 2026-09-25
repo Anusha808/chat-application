@@ -1,0 +1,261 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.chatapp.controller.SettingsController"
+            styleClass="settings-root">
+
+    <!-- ===================================================== -->
+    <!-- HEADER -->
+    <!-- ===================================================== -->
+
+    <top>
+
+        <HBox spacing="15"
+              alignment="CENTER_LEFT"
+              styleClass="settings-header">
+
+            <padding>
+                <Insets top="18"
+                        right="25"
+                        bottom="18"
+                        left="25"/>
+            </padding>
+
+            <Label text="⚙ SETTINGS"
+                   styleClass="settings-title"/>
+
+            <HBox HBox.hgrow="ALWAYS"/>
+
+            <Button text="BACK TO CHAT"
+                    onAction="#handleBackToChat"
+                    styleClass="back-button"/>
+
+        </HBox>
+
+    </top>
+
+
+    <!-- ===================================================== -->
+    <!-- SCROLLABLE SETTINGS CONTENT -->
+    <!-- ===================================================== -->
+
+    <center>
+
+        <ScrollPane fitToWidth="true"
+                    fitToHeight="false"
+                    pannable="true"
+                    hbarPolicy="NEVER"
+                    vbarPolicy="AS_NEEDED"
+                    styleClass="settings-scroll-pane">
+
+            <content>
+
+                <VBox spacing="20"
+                      alignment="TOP_CENTER"
+                      styleClass="settings-container">
+
+                    <padding>
+                        <Insets top="30"
+                                right="35"
+                                bottom="40"
+                                left="35"/>
+                    </padding>
+
+
+                    <!-- ===================================== -->
+                    <!-- PAGE DESCRIPTION -->
+                    <!-- ===================================== -->
+
+                    <VBox spacing="8"
+                          styleClass="settings-intro">
+
+                        <Label text="Application Settings"
+                               styleClass="section-title"/>
+
+                        <Label text="Manage your chat application preferences."
+                               wrapText="true"
+                               styleClass="section-description"/>
+
+                    </VBox>
+
+
+                    <!-- ===================================== -->
+                    <!-- NOTIFICATIONS -->
+                    <!-- ===================================== -->
+
+                    <VBox spacing="12"
+                          styleClass="setting-card">
+
+                        <Label text="🔔 Notifications"
+                               styleClass="card-title"/>
+
+                        <Label text="Receive notifications when new messages arrive."
+                               wrapText="true"
+                               styleClass="card-description"/>
+
+                        <CheckBox fx:id="notificationsCheckBox"
+                                  text="Enable notifications"
+                                  selected="true"
+                                  styleClass="settings-checkbox"/>
+
+                    </VBox>
+
+
+                    <!-- ===================================== -->
+                    <!-- MESSAGE SOUND -->
+                    <!-- ===================================== -->
+
+                    <VBox spacing="12"
+                          styleClass="setting-card">
+
+                        <Label text="🔊 Message Sound"
+                               styleClass="card-title"/>
+
+                        <Label text="Play a sound when you receive a new message."
+                               wrapText="true"
+                               styleClass="card-description"/>
+
+                        <CheckBox fx:id="soundCheckBox"
+                                  text="Enable message sound"
+                                  selected="true"
+                                  styleClass="settings-checkbox"/>
+
+                    </VBox>
+
+
+                    <!-- ===================================== -->
+                    <!-- DARK MODE -->
+                    <!-- ===================================== -->
+
+                    <VBox spacing="12"
+                          styleClass="setting-card">
+
+                        <Label text="🌙 Appearance"
+                               styleClass="card-title"/>
+
+                        <Label text="Change the appearance of the chat application."
+                               wrapText="true"
+                               styleClass="card-description"/>
+
+                        <CheckBox fx:id="darkModeCheckBox"
+                                  text="Enable dark mode"
+                                  selected="false"
+                                  styleClass="settings-checkbox"/>
+
+                    </VBox>
+
+
+                    <!-- ===================================== -->
+                    <!-- ONLINE STATUS -->
+                    <!-- ===================================== -->
+
+                    <VBox spacing="12"
+                          styleClass="setting-card">
+
+                        <Label text="🟢 Online Status"
+                               styleClass="card-title"/>
+
+                        <Label text="Allow other users to see when you are online."
+                               wrapText="true"
+                               styleClass="card-description"/>
+
+                        <CheckBox fx:id="onlineStatusCheckBox"
+                                  text="Show my online status"
+                                  selected="true"
+                                  styleClass="settings-checkbox"/>
+
+                    </VBox>
+
+
+                    <!-- ===================================== -->
+                    <!-- PRIVACY -->
+                    <!-- ===================================== -->
+
+                    <VBox spacing="12"
+                          styleClass="setting-card">
+
+                        <Label text="🔒 Privacy"
+                               styleClass="card-title"/>
+
+                        <Label text="Control how your profile information is displayed."
+                               wrapText="true"
+                               styleClass="card-description"/>
+
+                        <CheckBox text="Show profile information"
+                                  selected="true"
+                                  styleClass="settings-checkbox"/>
+
+                        <CheckBox text="Allow other users to find me"
+                                  selected="true"
+                                  styleClass="settings-checkbox"/>
+
+                    </VBox>
+
+
+                    <!-- ===================================== -->
+                    <!-- CHAT SETTINGS -->
+                    <!-- ===================================== -->
+
+                    <VBox spacing="12"
+                          styleClass="setting-card">
+
+                        <Label text="💬 Chat Settings"
+                               styleClass="card-title"/>
+
+                        <Label text="Manage your chat experience."
+                               wrapText="true"
+                               styleClass="card-description"/>
+
+                        <CheckBox text="Enter key sends message"
+                                  selected="true"
+                                  styleClass="settings-checkbox"/>
+
+                        <CheckBox text="Show message timestamps"
+                                  selected="true"
+                                  styleClass="settings-checkbox"/>
+
+                        <CheckBox text="Show typing indicators"
+                                  selected="true"
+                                  styleClass="settings-checkbox"/>
+
+                    </VBox>
+
+
+                    <!-- ===================================== -->
+                    <!-- SAVE SECTION -->
+                    <!-- ===================================== -->
+
+                    <VBox spacing="12"
+                          alignment="CENTER"
+                          styleClass="save-section">
+
+                        <Button text="SAVE SETTINGS"
+                                onAction="#handleSaveSettings"
+                                styleClass="save-button"/>
+
+                        <Label fx:id="statusLabel"
+                               text=""
+                               styleClass="status-label"/>
+
+                    </VBox>
+
+
+                </VBox>
+
+            </content>
+
+        </ScrollPane>
+
+    </center>
+
+</BorderPane>

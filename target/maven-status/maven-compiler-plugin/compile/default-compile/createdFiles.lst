@@ -17,6 +17,7 @@ com\chatapp\controller\AddMemberController$1.class
 com\chatapp\controller\LoginController.class
 com\chatapp\dao\UserDAO.class
 com\chatapp\client\ChatSocketClient.class
+com\chatapp\controller\SettingsController.class
 com\chatapp\model\GroupMessage.class
 com\chatapp\server\ClientHandler.class
 com\chatapp\controller\GroupMembersController.class

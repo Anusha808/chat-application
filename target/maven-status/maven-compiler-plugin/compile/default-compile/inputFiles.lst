@@ -5,6 +5,7 @@ C:\Users\Admin\Downloads\chat-application\src\main\java\com\chatapp\controller\G
 C:\Users\Admin\Downloads\chat-application\src\main\java\com\chatapp\controller\LoginController.java
 C:\Users\Admin\Downloads\chat-application\src\main\java\com\chatapp\controller\ProfileController.java
 C:\Users\Admin\Downloads\chat-application\src\main\java\com\chatapp\controller\RegisterController.java
+C:\Users\Admin\Downloads\chat-application\src\main\java\com\chatapp\controller\SettingsController.java
 C:\Users\Admin\Downloads\chat-application\src\main\java\com\chatapp\dao\GroupDAO.java
 C:\Users\Admin\Downloads\chat-application\src\main\java\com\chatapp\dao\GroupMemberDAO.java
 C:\Users\Admin\Downloads\chat-application\src\main\java\com\chatapp\dao\GroupMessageDAO.java

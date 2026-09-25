@@ -17,6 +17,10 @@ public class ChatSocketClient {
 
     private Consumer<String> messageListener;
 
+    // =========================================================
+    // CONNECT
+    // =========================================================
+
     public boolean connect(String username) {
 
         try {
@@ -81,7 +85,6 @@ public class ChatSocketClient {
         }
     }
 
-
     // =========================================================
     // START LISTENING
     // =========================================================
@@ -124,9 +127,8 @@ public class ChatSocketClient {
         listenerThread.start();
     }
 
-
     // =========================================================
-    // SEND PRIVATE MESSAGE
+    // SEND PRIVATE TEXT MESSAGE
     // =========================================================
 
     public void sendMessage(
@@ -155,6 +157,50 @@ public class ChatSocketClient {
         );
     }
 
+    // =========================================================
+    // SEND FILE / IMAGE MESSAGE
+    // =========================================================
+
+    public void sendFileMessage(
+            String receiverUsername,
+            String fileName,
+            String fileType,
+            String filePath
+    ) {
+
+        if (output == null) {
+
+            System.out.println(
+                    "Socket is not connected."
+            );
+
+            return;
+        }
+
+        /*
+         * Protocol:
+         *
+         * FILE|receiverUsername|fileName|fileType|filePath
+         */
+
+        String data =
+                "FILE|"
+                        + receiverUsername
+                        + "|"
+                        + fileName
+                        + "|"
+                        + fileType
+                        + "|"
+                        + filePath;
+
+        output.println(data);
+
+        System.out.println(
+                "File sent to server:"
+        );
+
+        System.out.println(data);
+    }
 
     // =========================================================
     // SEND GROUP MESSAGE
@@ -188,9 +234,8 @@ public class ChatSocketClient {
         );
     }
 
-
     // =========================================================
-    // NOTIFY SERVER THAT A GROUP WAS CREATED
+    // GROUP CREATED
     // =========================================================
 
     public void notifyGroupCreated(
@@ -218,9 +263,8 @@ public class ChatSocketClient {
         );
     }
 
-
     // =========================================================
-    // NOTIFY SERVER THAT A MEMBER WAS ADDED
+    // GROUP MEMBER ADDED
     // =========================================================
 
     public void notifyGroupMemberAdded(
@@ -251,9 +295,8 @@ public class ChatSocketClient {
         );
     }
 
-
     // =========================================================
-    // NOTIFY SERVER THAT A MEMBER WAS REMOVED
+    // GROUP MEMBER REMOVED
     // =========================================================
 
     public void notifyGroupMemberRemoved(
@@ -284,9 +327,8 @@ public class ChatSocketClient {
         );
     }
 
-
     // =========================================================
-    // NOTIFY SERVER THAT A MEMBER LEFT THE GROUP
+    // GROUP MEMBER LEFT
     // =========================================================
 
     public void notifyGroupMemberLeft(
@@ -317,9 +359,8 @@ public class ChatSocketClient {
         );
     }
 
-
     // =========================================================
-    // NOTIFY SERVER THAT A GROUP WAS DELETED
+    // GROUP DELETED
     // =========================================================
 
     public void notifyGroupDeleted(
@@ -347,9 +388,8 @@ public class ChatSocketClient {
         );
     }
 
-
     // =========================================================
-    // NOTIFY SERVER THAT A GROUP WAS RENAMED
+    // GROUP RENAMED
     // =========================================================
 
     public void notifyGroupRenamed(
@@ -380,9 +420,8 @@ public class ChatSocketClient {
         );
     }
 
-
     // =========================================================
-    // SET MESSAGE LISTENER
+    // MESSAGE LISTENER
     // =========================================================
 
     public void setMessageListener(
@@ -392,7 +431,6 @@ public class ChatSocketClient {
         this.messageListener =
                 messageListener;
     }
-
 
     // =========================================================
     // CHECK CONNECTION
@@ -404,7 +442,6 @@ public class ChatSocketClient {
                 && socket.isConnected()
                 && !socket.isClosed();
     }
-
 
     // =========================================================
     // DISCONNECT

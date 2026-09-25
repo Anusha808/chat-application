@@ -18,8 +18,16 @@ public class MessageDAO {
 
         String sql = """
                 INSERT INTO messages
-                (sender_id, receiver_id, message, is_read)
-                VALUES (?, ?, ?, FALSE)
+                (
+                    sender_id,
+                    receiver_id,
+                    message,
+                    file_name,
+                    file_path,
+                    file_type,
+                    is_read
+                )
+                VALUES (?, ?, ?, ?, ?, ?, FALSE)
                 """;
 
         try (Connection connection =
@@ -27,20 +35,13 @@ public class MessageDAO {
              PreparedStatement statement =
                      connection.prepareStatement(sql)) {
 
-            statement.setInt(
-                    1,
-                    message.getSenderId()
-            );
+            statement.setInt(1, message.getSenderId());
+            statement.setInt(2, message.getReceiverId());
+            statement.setString(3, message.getMessage());
 
-            statement.setInt(
-                    2,
-                    message.getReceiverId()
-            );
-
-            statement.setString(
-                    3,
-                    message.getMessage()
-            );
+            statement.setString(4, message.getFileName());
+            statement.setString(5, message.getFilePath());
+            statement.setString(6, message.getFileType());
 
             int rowsInserted =
                     statement.executeUpdate();
@@ -58,7 +59,6 @@ public class MessageDAO {
         }
     }
 
-
     // Load chat history
     public List<Message> getChatHistory(
             int userId,
@@ -73,7 +73,10 @@ public class MessageDAO {
                        sender_id,
                        receiver_id,
                        message,
-                       sent_at
+                       sent_at,
+                       file_name,
+                       file_path,
+                       file_type
                 FROM messages
                 WHERE
                     (sender_id = ? AND receiver_id = ?)
@@ -100,13 +103,17 @@ public class MessageDAO {
                 Timestamp timestamp =
                         resultSet.getTimestamp("sent_at");
 
-                Message message = new Message(
-                        resultSet.getInt("id"),
-                        resultSet.getInt("sender_id"),
-                        resultSet.getInt("receiver_id"),
-                        resultSet.getString("message"),
-                        timestamp.toLocalDateTime()
-                );
+                Message message =
+                        new Message(
+                                resultSet.getInt("id"),
+                                resultSet.getInt("sender_id"),
+                                resultSet.getInt("receiver_id"),
+                                resultSet.getString("message"),
+                                timestamp.toLocalDateTime(),
+                                resultSet.getString("file_name"),
+                                resultSet.getString("file_path"),
+                                resultSet.getString("file_type")
+                        );
 
                 messages.add(message);
             }
@@ -121,7 +128,6 @@ public class MessageDAO {
 
         return messages;
     }
-
 
     // Get unread message count
     public int getUnreadCount(
@@ -149,7 +155,6 @@ public class MessageDAO {
                     statement.executeQuery();
 
             if (resultSet.next()) {
-
                 return resultSet.getInt(1);
             }
 
@@ -163,7 +168,6 @@ public class MessageDAO {
 
         return 0;
     }
-
 
     // Mark messages as read
     public void markMessagesAsRead(
@@ -195,6 +199,83 @@ public class MessageDAO {
                     "Error marking messages as read: "
                             + e.getMessage()
             );
+        }
+    }
+
+    // Edit an existing message
+    // A user can edit only their own message
+    public boolean updateMessage(
+            int messageId,
+            int senderId,
+            String newMessage
+    ) {
+
+        String sql = """
+                UPDATE messages
+                SET message = ?
+                WHERE id = ?
+                AND sender_id = ?
+                """;
+
+        try (Connection connection =
+                     DatabaseConnection.getConnection();
+             PreparedStatement statement =
+                     connection.prepareStatement(sql)) {
+
+            statement.setString(1, newMessage);
+            statement.setInt(2, messageId);
+            statement.setInt(3, senderId);
+
+            int rowsUpdated =
+                    statement.executeUpdate();
+
+            return rowsUpdated > 0;
+
+        } catch (SQLException e) {
+
+            System.out.println(
+                    "Error updating message: "
+                            + e.getMessage()
+            );
+
+            return false;
+        }
+    }
+
+    // Delete an existing message
+    // A user can delete only their own message
+    public boolean deleteMessage(
+            int messageId,
+            int senderId
+    ) {
+
+        String sql = """
+                DELETE FROM messages
+                WHERE id = ?
+                AND sender_id = ?
+                """;
+
+        try (Connection connection =
+                     DatabaseConnection.getConnection();
+             PreparedStatement statement =
+                     connection.prepareStatement(sql)) {
+
+            statement.setInt(1, messageId);
+            statement.setInt(2, senderId);
+
+            int rowsDeleted =
+                    statement.executeUpdate();
+
+            return rowsDeleted > 0;
+
+        } catch (SQLException e) {
+
+            System.out.println(
+                    "Error deleting message: "
+                            + e.getMessage()
+            );
+
+            return false;
         }
     }
 }

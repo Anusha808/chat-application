@@ -24,31 +24,60 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.DialogPane;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TextInputDialog;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
-import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.shape.Circle;
+import javafx.stage.FileChooser;
+import javafx.stage.Popup;
 import javafx.stage.Stage;
 
+import java.io.File;
+import java.io.IOException;
+
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
+
 import java.sql.Connection;
+
 import java.time.format.DateTimeFormatter;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
+
 
 public class ChatController {
 
+
+    // =========================================================
+    // FXML COMPONENTS
+    // =========================================================
+
     @FXML
     private Label welcomeLabel;
+
+    @FXML
+    private TextField searchField;
+
+    @FXML
+    private Button clearSearchButton;
 
     @FXML
     private ListView<String> userListView;
@@ -65,8 +94,37 @@ public class ChatController {
     @FXML
     private TextField messageField;
 
+
+    // =========================================================
+    // FILE / IMAGE ATTACHMENT
+    // =========================================================
+
+    @FXML
+    private Button attachmentButton;
+
     @FXML
     private Button membersButton;
+
+
+    // =========================================================
+    // EMOJI SUPPORT
+    // =========================================================
+
+    @FXML
+    private Button emojiButton;
+
+    private Popup emojiPopup;
+
+
+    // =========================================================
+    // MESSAGE SEARCH
+    // =========================================================
+
+    @FXML
+    private TextField messageSearchField;
+
+    @FXML
+    private Button clearMessageSearchButton;
 
 
     // =========================================================
@@ -80,6 +138,22 @@ public class ChatController {
     private User selectedUser;
 
     private Group selectedGroup;
+
+
+    // =========================================================
+    // CURRENT PRIVATE MESSAGES
+    // =========================================================
+
+    private List<Message> currentPrivateMessages =
+            new ArrayList<>();
+
+
+    // =========================================================
+    // DISPLAYED PRIVATE MESSAGES
+    // =========================================================
+
+    private List<Message> displayedPrivateMessages =
+            new ArrayList<>();
 
 
     // =========================================================
@@ -136,13 +210,51 @@ public class ChatController {
 
 
         // =====================================================
+        // USER SEARCH
+        // =====================================================
+
+        if (searchField != null) {
+
+            searchField.textProperty()
+                    .addListener(
+                            (observable,
+                             oldValue,
+                             newValue) -> {
+
+                                loadUsers();
+                            }
+                    );
+        }
+
+
+        // =====================================================
+        // MESSAGE SEARCH
+        // =====================================================
+
+        if (messageSearchField != null) {
+
+            messageSearchField.textProperty()
+                    .addListener(
+                            (observable,
+                             oldValue,
+                             newValue) -> {
+
+                                filterMessages();
+                            }
+                    );
+        }
+
+
+        // =====================================================
         // PRIVATE USER SELECTION
         // =====================================================
 
         userListView.getSelectionModel()
                 .selectedItemProperty()
                 .addListener(
-                        (observable, oldValue, newValue) -> {
+                        (observable,
+                         oldValue,
+                         newValue) -> {
 
                             if (newValue != null) {
 
@@ -173,7 +285,9 @@ public class ChatController {
         groupListView.getSelectionModel()
                 .selectedItemProperty()
                 .addListener(
-                        (observable, oldValue, newValue) -> {
+                        (observable,
+                         oldValue,
+                         newValue) -> {
 
                             if (newValue != null) {
 
@@ -183,6 +297,349 @@ public class ChatController {
                             }
                         }
                 );
+    }
+
+
+    // =========================================================
+    // EMOJI SUPPORT
+    // =========================================================
+
+    @FXML
+    private void handleEmoji() {
+
+        if (emojiPopup != null
+                && emojiPopup.isShowing()) {
+
+            emojiPopup.hide();
+
+            return;
+        }
+
+
+        emojiPopup = new Popup();
+
+        emojiPopup.setAutoHide(true);
+
+        emojiPopup.setAutoFix(true);
+
+
+        VBox emojiContainer =
+                new VBox(8);
+
+        emojiContainer.setPadding(
+                new Insets(10)
+        );
+
+        emojiContainer.setAlignment(
+                Pos.CENTER
+        );
+
+        emojiContainer.setStyle(
+                "-fx-background-color: white;"
+                        + "-fx-border-color: #d1d5db;"
+                        + "-fx-border-width: 1;"
+                        + "-fx-background-radius: 10;"
+                        + "-fx-border-radius: 10;"
+                        + "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.20), 10, 0, 0, 3);"
+        );
+
+
+        String[] emojis = {
+
+                "😀", "😃", "😄", "😁",
+                "😆", "😅", "😂", "🤣",
+
+                "😊", "😇", "🙂", "🙃",
+                "😉", "😌", "😍", "🥰",
+
+                "😘", "😗", "😙", "😚",
+                "😋", "😛", "😝", "😜",
+
+                "🤪", "🤨", "🧐", "🤓",
+                "😎", "🤩", "🥳", "😏",
+
+                "😒", "😞", "😔", "😟",
+                "😕", "🙁", "☹️", "😣",
+
+                "😖", "😫", "😩", "🥺",
+                "😢", "😭", "😤", "😠",
+
+                "😡", "🤬", "🤯", "😳",
+                "🥵", "🥶", "😱", "😨",
+
+                "😰", "😥", "😓", "🤗",
+                "🤔", "🫣", "🤭", "🤫",
+
+                "🤥", "😶", "😐", "😑",
+                "😬", "🙄", "😯", "😦",
+
+                "😧", "😮", "😲", "🥱",
+                "😴", "🤤", "😪", "😵",
+
+                "🤐", "🥴", "🤢", "🤮",
+
+                "👍", "👎", "👌", "✌️",
+                "🤞", "🤟", "🤘", "🤙",
+
+                "👈", "👉", "👆", "👇",
+                "☝️", "✋", "🤚", "🖐️",
+
+                "🖖", "👏", "🙌", "👐",
+                "🤲", "🙏", "🤝", "💪",
+
+                "👋", "💅",
+
+                "❤️", "🧡", "💛", "💚",
+                "💙", "💜", "🖤", "🤍",
+
+                "🤎", "💔", "💕", "💞",
+                "💓", "💗", "💖", "💘",
+
+                "💝", "💟",
+
+                "🔥", "✨", "⭐", "🌟",
+                "💫", "💥", "💯", "🎉",
+
+                "🎊", "🎁", "🎈", "🥳",
+
+                "🌸", "🌹", "🌺", "🌻",
+                "🌼", "🌷", "🌱", "🍀",
+
+                "🌈", "☀️", "🌙", "⭐",
+
+                "🍎", "🍊", "🍋", "🍌",
+                "🍉", "🍇", "🍓", "🍒",
+
+                "🍑", "🍍", "🥝", "🍕",
+                "🍔", "🍟", "🍿", "🍩",
+
+                "🍪", "🍫", "🎂", "🍰",
+                "☕", "🍵",
+
+                "⚽", "🏀", "🏈", "⚾",
+                "🎾", "🏆", "🎮", "🎯",
+
+                "🎵", "🎶", "🎸", "🎧",
+
+                "💻", "🖥️", "⌨️", "🖱️",
+                "📱", "📷", "📚", "📖",
+
+                "💡", "🔔", "📌", "✏️"
+        };
+
+
+        HBox currentRow =
+                new HBox(3);
+
+        currentRow.setAlignment(
+                Pos.CENTER
+        );
+
+
+        int count = 0;
+
+
+        for (String emoji : emojis) {
+
+            Button emojiChoice =
+                    new Button(
+                            emoji
+                    );
+
+
+            emojiChoice.setPrefWidth(
+                    40
+            );
+
+            emojiChoice.setPrefHeight(
+                    40
+            );
+
+
+            emojiChoice.setStyle(
+                    "-fx-background-color: transparent;"
+                            + "-fx-font-size: 24px;"
+                            + "-fx-font-family: 'Segoe UI Emoji';"
+                            + "-fx-background-radius: 8px;"
+                            + "-fx-cursor: hand;"
+            );
+
+
+            emojiChoice.setOnMouseEntered(
+                    event ->
+                            emojiChoice.setStyle(
+                                    "-fx-background-color: #eef2ff;"
+                                            + "-fx-font-size: 24px;"
+                                            + "-fx-font-family: 'Segoe UI Emoji';"
+                                            + "-fx-background-radius: 8px;"
+                                            + "-fx-cursor: hand;"
+                            )
+            );
+
+
+            emojiChoice.setOnMouseExited(
+                    event ->
+                            emojiChoice.setStyle(
+                                    "-fx-background-color: transparent;"
+                                            + "-fx-font-size: 24px;"
+                                            + "-fx-font-family: 'Segoe UI Emoji';"
+                                            + "-fx-background-radius: 8px;"
+                                            + "-fx-cursor: hand;"
+                            )
+            );
+
+
+            emojiChoice.setOnAction(
+                    event -> {
+
+                        insertEmoji(
+                                emoji
+                        );
+
+                        emojiPopup.hide();
+                    }
+            );
+
+
+            currentRow
+                    .getChildren()
+                    .add(
+                            emojiChoice
+                    );
+
+
+            count++;
+
+
+            if (count == 8) {
+
+                emojiContainer
+                        .getChildren()
+                        .add(
+                                currentRow
+                        );
+
+
+                currentRow =
+                        new HBox(3);
+
+                currentRow.setAlignment(
+                        Pos.CENTER
+                );
+
+                count = 0;
+            }
+        }
+
+
+        if (!currentRow
+                .getChildren()
+                .isEmpty()) {
+
+            emojiContainer
+                    .getChildren()
+                    .add(
+                            currentRow
+                    );
+        }
+
+
+        emojiPopup
+                .getContent()
+                .add(
+                        emojiContainer
+                );
+
+
+        if (emojiButton != null
+                && emojiButton.getScene() != null) {
+
+            javafx.geometry.Point2D point =
+                    emojiButton.localToScreen(
+                            0,
+                            0
+                    );
+
+
+            if (point != null) {
+
+                double popupX =
+                        point.getX();
+
+                double popupY =
+                        point.getY()
+                                - 430;
+
+
+                if (popupY < 10) {
+
+                    popupY = 10;
+                }
+
+
+                emojiPopup.show(
+                        emojiButton,
+                        popupX,
+                        popupY
+                );
+            }
+        }
+    }
+
+
+    // =========================================================
+    // INSERT EMOJI
+    // =========================================================
+
+    private void insertEmoji(
+            String emoji
+    ) {
+
+        if (messageField == null) {
+
+            return;
+        }
+
+
+        int caretPosition =
+                messageField
+                        .getCaretPosition();
+
+
+        String currentText =
+                messageField
+                        .getText();
+
+
+        if (currentText == null) {
+
+            currentText = "";
+        }
+
+
+        String newText =
+                currentText.substring(
+                        0,
+                        caretPosition
+                )
+                        + emoji
+                        + currentText.substring(
+                        caretPosition
+                );
+
+
+        messageField.setText(
+                newText
+        );
+
+
+        messageField.positionCaret(
+                caretPosition
+                        + emoji.length()
+        );
+
+
+        messageField.requestFocus();
     }
 
 
@@ -207,15 +664,16 @@ public class ChatController {
                                         empty
                                 );
 
+
                                 if (empty
                                         || item == null) {
 
                                     setText(null);
-
                                     setGraphic(null);
 
                                     return;
                                 }
+
 
                                 String userName =
                                         item
@@ -229,13 +687,16 @@ public class ChatController {
                                                 )
                                                 .trim();
 
+
                                 boolean isOnline =
                                         item.startsWith(
                                                 "[ONLINE]"
                                         );
 
+
                                 Circle statusCircle =
                                         new Circle(5);
+
 
                                 if (isOnline) {
 
@@ -250,17 +711,21 @@ public class ChatController {
                                     );
                                 }
 
+
                                 Label nameLabel =
                                         new Label(
                                                 userName
                                         );
+
 
                                 nameLabel.setStyle(
                                         "-fx-font-size: 14px;"
                                                 + "-fx-text-fill: #111827;"
                                 );
 
+
                                 int unread = 0;
+
 
                                 if (currentUser != null) {
 
@@ -268,6 +733,7 @@ public class ChatController {
                                             userDAO.findUserByUsername(
                                                     userName
                                             );
+
 
                                     if (otherUser != null) {
 
@@ -279,8 +745,10 @@ public class ChatController {
                                     }
                                 }
 
+
                                 Label unreadLabel =
                                         new Label();
+
 
                                 if (unread > 0) {
 
@@ -289,6 +757,7 @@ public class ChatController {
                                                     unread
                                             )
                                     );
+
 
                                     unreadLabel.setStyle(
                                             "-fx-background-color: #ef4444;"
@@ -300,20 +769,25 @@ public class ChatController {
                                     );
                                 }
 
+
                                 HBox container =
                                         new HBox(10);
+
 
                                 container.setAlignment(
                                         Pos.CENTER_LEFT
                                 );
 
+
                                 HBox spacer =
                                         new HBox();
+
 
                                 HBox.setHgrow(
                                         spacer,
                                         Priority.ALWAYS
                                 );
+
 
                                 container
                                         .getChildren()
@@ -323,6 +797,7 @@ public class ChatController {
                                                 spacer
                                         );
 
+
                                 if (unread > 0) {
 
                                     container
@@ -331,6 +806,7 @@ public class ChatController {
                                                     unreadLabel
                                             );
                                 }
+
 
                                 setText(null);
 
@@ -364,15 +840,17 @@ public class ChatController {
                                         empty
                                 );
 
+
                                 if (empty
                                         || item == null) {
 
                                     setText(null);
-
                                     setGraphic(null);
+                                    setContextMenu(null);
 
                                     return;
                                 }
+
 
                                 String[] parts =
                                         item.split(
@@ -380,14 +858,16 @@ public class ChatController {
                                                 3
                                         );
 
+
                                 if (parts.length < 3) {
 
                                     setText(item);
-
                                     setGraphic(null);
+                                    setContextMenu(null);
 
                                     return;
                                 }
+
 
                                 String sender =
                                         parts[0];
@@ -398,45 +878,43 @@ public class ChatController {
                                 String time =
                                         parts[2];
 
+
                                 boolean isSentByMe =
                                         sender.equals(
                                                 "You"
                                         );
 
-                                Label messageLabel =
-                                        new Label(
-                                                message
-                                        );
 
-                                messageLabel.setWrapText(
-                                        true
-                                );
+                                Message currentMessage =
+                                        null;
 
-                                messageLabel.setMaxWidth(
-                                        400
-                                );
 
-                                messageLabel
-                                        .getStyleClass()
-                                        .add(
-                                                isSentByMe
-                                                        ? "sent-message"
-                                                        : "received-message"
-                                        );
+                                if (selectedGroup == null
+                                        && getIndex() >= 0
+                                        && getIndex()
+                                        < displayedPrivateMessages
+                                        .size()) {
 
-                                Label timeLabel =
-                                        new Label(
-                                                time
-                                        );
+                                    currentMessage =
+                                            displayedPrivateMessages
+                                                    .get(
+                                                            getIndex()
+                                                    );
+                                }
 
-                                timeLabel
-                                        .getStyleClass()
-                                        .add(
-                                                "message-time"
-                                        );
+
+                                boolean hasAttachment =
+                                        currentMessage != null
+                                                && currentMessage
+                                                .getFileName() != null
+                                                && !currentMessage
+                                                .getFileName()
+                                                .isBlank();
+
 
                                 VBox bubble =
-                                        new VBox(3);
+                                        new VBox(5);
+
 
                                 bubble
                                         .getStyleClass()
@@ -446,6 +924,7 @@ public class ChatController {
                                                         : "received-bubble"
                                         );
 
+
                                 if (selectedGroup != null
                                         && !isSentByMe) {
 
@@ -454,11 +933,13 @@ public class ChatController {
                                                     sender
                                             );
 
+
                                     senderLabel.setStyle(
                                             "-fx-font-size: 11px;"
                                                     + "-fx-font-weight: bold;"
                                                     + "-fx-text-fill: #2563eb;"
                                     );
+
 
                                     bubble
                                             .getChildren()
@@ -467,19 +948,214 @@ public class ChatController {
                                             );
                                 }
 
+
+                                if (hasAttachment) {
+
+                                    String filePath =
+                                            currentMessage
+                                                    .getFilePath();
+
+                                    String fileType =
+                                            currentMessage
+                                                    .getFileType();
+
+
+                                    if (fileType != null
+                                            && fileType.startsWith(
+                                            "image/"
+                                    )) {
+
+                                        try {
+
+                                            File imageFile =
+                                                    new File(
+                                                            filePath
+                                                    );
+
+
+                                            if (imageFile.exists()) {
+
+                                                Image image =
+                                                        new Image(
+                                                                imageFile
+                                                                        .toURI()
+                                                                        .toString(),
+                                                                280,
+                                                                220,
+                                                                true,
+                                                                true
+                                                        );
+
+
+                                                ImageView imageView =
+                                                        new ImageView(
+                                                                image
+                                                        );
+
+
+                                                imageView.setFitWidth(
+                                                        280
+                                                );
+
+                                                imageView.setFitHeight(
+                                                        220
+                                                );
+
+                                                imageView.setPreserveRatio(
+                                                        true
+                                                );
+
+                                                imageView.setSmooth(
+                                                        true
+                                                );
+
+
+                                                bubble
+                                                        .getChildren()
+                                                        .add(
+                                                                imageView
+                                                        );
+
+
+                                                Label fileNameLabel =
+                                                        new Label(
+                                                                "🖼 "
+                                                                        + currentMessage
+                                                                        .getFileName()
+                                                        );
+
+
+                                                fileNameLabel.setStyle(
+                                                        "-fx-font-size: 11px;"
+                                                                + "-fx-text-fill: #64748b;"
+                                                );
+
+
+                                                bubble
+                                                        .getChildren()
+                                                        .add(
+                                                                fileNameLabel
+                                                        );
+
+                                            } else {
+
+                                                Label fileLabel =
+                                                        new Label(
+                                                                "🖼 "
+                                                                        + currentMessage
+                                                                        .getFileName()
+                                                                        + " (file unavailable)"
+                                                        );
+
+                                                bubble
+                                                        .getChildren()
+                                                        .add(
+                                                                fileLabel
+                                                        );
+                                            }
+
+                                        } catch (Exception e) {
+
+                                            Label fileLabel =
+                                                    new Label(
+                                                            "🖼 "
+                                                                    + currentMessage
+                                                                    .getFileName()
+                                                    );
+
+                                            bubble
+                                                    .getChildren()
+                                                    .add(
+                                                            fileLabel
+                                                    );
+                                        }
+
+                                    } else {
+
+                                        Label fileLabel =
+                                                new Label(
+                                                        "📎 "
+                                                                + currentMessage
+                                                                .getFileName()
+                                                );
+
+
+                                        fileLabel.setStyle(
+                                                "-fx-font-size: 14px;"
+                                                        + "-fx-font-weight: bold;"
+                                        );
+
+
+                                        bubble
+                                                .getChildren()
+                                                .add(
+                                                        fileLabel
+                                                );
+                                    }
+
+                                } else {
+
+                                    Label messageLabel =
+                                            new Label(
+                                                    message
+                                            );
+
+
+                                    messageLabel.setWrapText(
+                                            true
+                                    );
+
+
+                                    messageLabel.setMaxWidth(
+                                            400
+                                    );
+
+
+                                    messageLabel
+                                            .getStyleClass()
+                                            .add(
+                                                    isSentByMe
+                                                            ? "sent-message"
+                                                            : "received-message"
+                                            );
+
+
+                                    bubble
+                                            .getChildren()
+                                            .add(
+                                                    messageLabel
+                                            );
+                                }
+
+
+                                Label timeLabel =
+                                        new Label(
+                                                time
+                                        );
+
+
+                                timeLabel
+                                        .getStyleClass()
+                                        .add(
+                                                "message-time"
+                                        );
+
+
                                 bubble
                                         .getChildren()
-                                        .addAll(
-                                                messageLabel,
+                                        .add(
                                                 timeLabel
                                         );
+
 
                                 HBox container =
                                         new HBox();
 
+
                                 container.setMaxWidth(
                                         Double.MAX_VALUE
                                 );
+
 
                                 if (isSentByMe) {
 
@@ -494,11 +1170,83 @@ public class ChatController {
                                     );
                                 }
 
+
                                 container
                                         .getChildren()
                                         .add(
                                                 bubble
                                         );
+
+
+                                if (isSentByMe
+                                        && selectedGroup == null
+                                        && currentUser != null
+                                        && currentMessage != null) {
+
+                                    ContextMenu contextMenu =
+                                            new ContextMenu();
+
+
+                                    final Message messageForContext =
+                                            currentMessage;
+
+
+                                    if (!hasAttachment) {
+
+                                        MenuItem editItem =
+                                                new MenuItem(
+                                                        "✏ Edit Message"
+                                                );
+
+
+                                        editItem.setOnAction(
+                                                event ->
+                                                        handleEditMessage(
+                                                                messageForContext
+                                                        )
+                                        );
+
+
+                                        contextMenu
+                                                .getItems()
+                                                .add(
+                                                        editItem
+                                                );
+                                    }
+
+
+                                    MenuItem deleteItem =
+                                            new MenuItem(
+                                                    "🗑 Delete Message"
+                                            );
+
+
+                                    deleteItem.setOnAction(
+                                            event ->
+                                                    handleDeleteMessage(
+                                                            messageForContext
+                                                    )
+                                    );
+
+
+                                    contextMenu
+                                            .getItems()
+                                            .add(
+                                                    deleteItem
+                                            );
+
+
+                                    setContextMenu(
+                                            contextMenu
+                                    );
+
+                                } else {
+
+                                    setContextMenu(
+                                            null
+                                    );
+                                }
+
 
                                 setText(null);
 
@@ -512,10 +1260,514 @@ public class ChatController {
 
 
     // =========================================================
+    // EDIT MESSAGE
+    // =========================================================
+
+    private void handleEditMessage(
+            Message message
+    ) {
+
+        if (message == null
+                || currentUser == null) {
+
+            return;
+        }
+
+
+        if (message.getSenderId()
+                != currentUser.getId()) {
+
+            Alert alert =
+                    new Alert(
+                            Alert.AlertType.WARNING
+                    );
+
+            alert.setTitle(
+                    "Edit Message"
+            );
+
+            alert.setHeaderText(
+                    null
+            );
+
+            alert.setContentText(
+                    "You can edit only your own messages."
+            );
+
+            alert.showAndWait();
+
+            return;
+        }
+
+
+        TextInputDialog dialog =
+                new TextInputDialog(
+                        message.getMessage()
+                );
+
+
+        dialog.setTitle(
+                "Edit Message"
+        );
+
+        dialog.setHeaderText(
+                "Edit your message"
+        );
+
+        dialog.setContentText(
+                "Message:"
+        );
+
+
+        Optional<String> result =
+                dialog.showAndWait();
+
+
+        if (result.isEmpty()) {
+
+            return;
+        }
+
+
+        String newMessage =
+                result.get().trim();
+
+
+        if (newMessage.isEmpty()) {
+
+            Alert alert =
+                    new Alert(
+                            Alert.AlertType.WARNING
+                    );
+
+            alert.setTitle(
+                    "Invalid Message"
+            );
+
+            alert.setHeaderText(
+                    null
+            );
+
+            alert.setContentText(
+                    "Message cannot be empty."
+            );
+
+            alert.showAndWait();
+
+            return;
+        }
+
+
+        if (newMessage.equals(
+                message.getMessage()
+        )) {
+
+            return;
+        }
+
+
+        boolean updated =
+                messageDAO.updateMessage(
+                        message.getId(),
+                        currentUser.getId(),
+                        newMessage
+                );
+
+
+        if (updated) {
+
+            loadChatHistory();
+
+        } else {
+
+            Alert alert =
+                    new Alert(
+                            Alert.AlertType.ERROR
+                    );
+
+            alert.setTitle(
+                    "Edit Message"
+            );
+
+            alert.setHeaderText(
+                    "Could not edit message"
+            );
+
+            alert.setContentText(
+                    "The message could not be updated."
+            );
+
+            alert.showAndWait();
+        }
+    }
+
+
+    // =========================================================
+    // DELETE MESSAGE
+    // =========================================================
+
+    private void handleDeleteMessage(
+            Message message
+    ) {
+
+        if (message == null
+                || currentUser == null) {
+
+            return;
+        }
+
+
+        if (message.getSenderId()
+                != currentUser.getId()) {
+
+            Alert alert =
+                    new Alert(
+                            Alert.AlertType.WARNING
+                    );
+
+            alert.setTitle(
+                    "Delete Message"
+            );
+
+            alert.setHeaderText(
+                    null
+            );
+
+            alert.setContentText(
+                    "You can delete only your own messages."
+            );
+
+            alert.showAndWait();
+
+            return;
+        }
+
+
+        Alert confirmation =
+                new Alert(
+                        Alert.AlertType.CONFIRMATION
+                );
+
+
+        confirmation.setTitle(
+                "Delete Message"
+        );
+
+        confirmation.setHeaderText(
+                "Delete this message?"
+        );
+
+        confirmation.setContentText(
+                "This message will be permanently deleted."
+        );
+
+
+        Optional<ButtonType> result =
+                confirmation.showAndWait();
+
+
+        if (result.isEmpty()
+                || result.get() != ButtonType.OK) {
+
+            return;
+        }
+
+
+        boolean deleted =
+                messageDAO.deleteMessage(
+                        message.getId(),
+                        currentUser.getId()
+                );
+
+
+        if (deleted) {
+
+            loadChatHistory();
+
+        } else {
+
+            Alert alert =
+                    new Alert(
+                            Alert.AlertType.ERROR
+                    );
+
+            alert.setTitle(
+                    "Delete Message"
+            );
+
+            alert.setHeaderText(
+                    "Could not delete message"
+            );
+
+            alert.setContentText(
+                    "The message could not be deleted."
+            );
+
+            alert.showAndWait();
+        }
+    }
+
+
+    // =========================================================
+    // FILE / IMAGE ATTACHMENT
+    // =========================================================
+
+    @FXML
+    private void handleAttachment() {
+
+        if (currentUser == null) {
+
+            showAttachmentAlert(
+                    "Please login first."
+            );
+
+            return;
+        }
+
+
+        if (selectedUser == null) {
+
+            showAttachmentAlert(
+                    "Please select a user first."
+            );
+
+            return;
+        }
+
+
+        if (!socketClient.isConnected()) {
+
+            showAttachmentAlert(
+                    "Chat server is not connected."
+            );
+
+            return;
+        }
+
+
+        FileChooser fileChooser =
+                new FileChooser();
+
+
+        fileChooser.setTitle(
+                "Select File or Image"
+        );
+
+
+        FileChooser.ExtensionFilter images =
+                new FileChooser.ExtensionFilter(
+                        "Images",
+                        "*.png",
+                        "*.jpg",
+                        "*.jpeg",
+                        "*.gif",
+                        "*.bmp",
+                        "*.webp"
+                );
+
+
+        FileChooser.ExtensionFilter documents =
+                new FileChooser.ExtensionFilter(
+                        "Documents",
+                        "*.pdf",
+                        "*.doc",
+                        "*.docx",
+                        "*.txt",
+                        "*.xlsx",
+                        "*.xls",
+                        "*.ppt",
+                        "*.pptx"
+                );
+
+
+        FileChooser.ExtensionFilter allFiles =
+                new FileChooser.ExtensionFilter(
+                        "All Files",
+                        "*.*"
+                );
+
+
+        fileChooser.getExtensionFilters()
+                .addAll(
+                        images,
+                        documents,
+                        allFiles
+                );
+
+
+        File selectedFile =
+                fileChooser.showOpenDialog(
+                        messageField
+                                .getScene()
+                                .getWindow()
+                );
+
+
+        if (selectedFile == null) {
+
+            return;
+        }
+
+
+        try {
+
+            if (!selectedFile.exists()
+                    || !selectedFile.isFile()) {
+
+                showAttachmentAlert(
+                        "Selected file could not be found."
+                );
+
+                return;
+            }
+
+
+            String originalFileName =
+                    selectedFile.getName();
+
+
+            String fileType =
+                    Files.probeContentType(
+                            selectedFile.toPath()
+                    );
+
+
+            if (fileType == null) {
+
+                fileType =
+                        "application/octet-stream";
+            }
+
+
+            Path uploadDirectory =
+                    Paths.get(
+                            "uploads"
+                    );
+
+
+            if (!Files.exists(
+                    uploadDirectory
+            )) {
+
+                Files.createDirectories(
+                        uploadDirectory
+                );
+            }
+
+
+            String uniqueFileName =
+                    System.currentTimeMillis()
+                            + "_"
+                            + originalFileName;
+
+
+            Path destination =
+                    uploadDirectory.resolve(
+                            uniqueFileName
+                    );
+
+
+            Files.copy(
+                    selectedFile.toPath(),
+                    destination,
+                    StandardCopyOption.REPLACE_EXISTING
+            );
+
+
+            String absoluteFilePath =
+                    destination
+                            .toAbsolutePath()
+                            .normalize()
+                            .toString();
+
+
+            Message message =
+                    new Message(
+                            currentUser.getId(),
+                            selectedUser.getId(),
+                            "",
+                            originalFileName,
+                            absoluteFilePath,
+                            fileType
+                    );
+
+
+            boolean saved =
+                    messageDAO.saveMessage(
+                            message
+                    );
+
+
+            if (!saved) {
+
+                showAttachmentAlert(
+                        "Could not save the attachment."
+                );
+
+                return;
+            }
+
+
+            socketClient.sendFileMessage(
+                    selectedUser.getUsername(),
+                    originalFileName,
+                    fileType,
+                    absoluteFilePath
+            );
+
+
+            loadChatHistory();
+
+            messageField.requestFocus();
+
+
+        } catch (IOException e) {
+
+            e.printStackTrace();
+
+            showAttachmentAlert(
+                    "Unable to copy or send the selected file."
+            );
+        }
+    }
+
+
+    // =========================================================
+    // ATTACHMENT ALERT
+    // =========================================================
+
+    private void showAttachmentAlert(
+            String message
+    ) {
+
+        Alert alert =
+                new Alert(
+                        Alert.AlertType.WARNING
+                );
+
+        alert.setTitle(
+                "Attachment"
+        );
+
+        alert.setHeaderText(
+                null
+        );
+
+        alert.setContentText(
+                message
+        );
+
+        alert.showAndWait();
+    }
+
+
+    // =========================================================
     // SET CURRENT USER
     // =========================================================
 
-    public void setCurrentUser(User user) {
+    public void setCurrentUser(
+            User user
+    ) {
 
         if (user == null) {
 
@@ -526,42 +1778,29 @@ public class ChatController {
             return;
         }
 
-        this.currentUser = user;
-        this.username = user.getUsername();
+
+        this.currentUser =
+                user;
+
+
+        this.username =
+                user.getUsername();
+
 
         if (welcomeLabel != null) {
 
             welcomeLabel.setText(
-                    "Welcome, " + user.getUsername() + "!"
+                    "Welcome, "
+                            + user.getUsername()
+                            + "!"
             );
         }
 
-        System.out.println(
-                "================================="
-        );
-
-        System.out.println(
-                "CURRENT USER SET"
-        );
-
-        System.out.println(
-                "User ID: " + user.getId()
-        );
-
-        System.out.println(
-                "Username: " + user.getUsername()
-        );
-
-        System.out.println(
-                "Email: " + user.getEmail()
-        );
-
-        System.out.println(
-                "================================="
-        );
 
         loadUsers();
+
         loadGroups();
+
         connectToSocketServer();
     }
 
@@ -574,16 +1813,22 @@ public class ChatController {
             String username
     ) {
 
-        this.username = username;
+        this.username =
+                username;
+
 
         welcomeLabel.setText(
-                "Welcome, " + username + "!"
+                "Welcome, "
+                        + username
+                        + "!"
         );
+
 
         currentUser =
                 userDAO.findUserByUsername(
                         username
                 );
+
 
         loadUsers();
 
@@ -599,18 +1844,60 @@ public class ChatController {
 
     private void loadUsers() {
 
+        if (userListView == null) {
+
+            return;
+        }
+
+
         List<User> users =
                 userDAO.getAllUsers();
+
+
+        String searchText = "";
+
+
+        if (searchField != null
+                && searchField.getText() != null) {
+
+            searchText =
+                    searchField.getText()
+                            .trim()
+                            .toLowerCase();
+        }
+
+
+        final String finalSearchText =
+                searchText;
+
 
         List<String> usernames =
                 users.stream()
 
                         .filter(
                                 user ->
-                                        !user.getUsername()
+                                        user.getUsername() != null
+                                                && !user.getUsername()
                                                 .equals(
                                                         username
                                                 )
+                        )
+
+                        .filter(
+                                user -> {
+
+                                    if (finalSearchText.isEmpty()) {
+
+                                        return true;
+                                    }
+
+
+                                    return user.getUsername()
+                                            .toLowerCase()
+                                            .contains(
+                                                    finalSearchText
+                                            );
+                                }
                         )
 
                         .map(user -> {
@@ -618,7 +1905,10 @@ public class ChatController {
                             String name =
                                     user.getUsername();
 
-                            if (onlineUsers.contains(name)) {
+
+                            if (onlineUsers.contains(
+                                    name
+                            )) {
 
                                 return "[ONLINE] "
                                         + name;
@@ -632,11 +1922,210 @@ public class ChatController {
 
                         .toList();
 
+
         userListView.setItems(
                 FXCollections.observableArrayList(
                         usernames
                 )
         );
+    }
+
+
+    // =========================================================
+    // CLEAR USER SEARCH
+    // =========================================================
+
+    @FXML
+    private void handleClearSearch() {
+
+        if (searchField != null) {
+
+            searchField.clear();
+        }
+
+
+        userListView
+                .getSelectionModel()
+                .clearSelection();
+
+
+        loadUsers();
+    }
+
+
+    // =========================================================
+    // FILTER MESSAGES
+    // =========================================================
+
+    private void filterMessages() {
+
+        if (selectedUser == null
+                || currentUser == null
+                || messageListView == null) {
+
+            return;
+        }
+
+
+        String searchText = "";
+
+
+        if (messageSearchField != null
+                && messageSearchField.getText() != null) {
+
+            searchText =
+                    messageSearchField.getText()
+                            .trim()
+                            .toLowerCase();
+        }
+
+
+        final String finalSearchText =
+                searchText;
+
+
+        List<Message> filteredMessages =
+                currentPrivateMessages.stream()
+                        .filter(message -> {
+
+                            if (finalSearchText.isEmpty()) {
+
+                                return true;
+                            }
+
+
+                            String text =
+                                    message.getMessage();
+
+                            String fileName =
+                                    message.getFileName();
+
+
+                            boolean textMatches =
+                                    text != null
+                                            && text
+                                            .toLowerCase()
+                                            .contains(
+                                                    finalSearchText
+                                            );
+
+
+                            boolean fileMatches =
+                                    fileName != null
+                                            && fileName
+                                            .toLowerCase()
+                                            .contains(
+                                                    finalSearchText
+                                            );
+
+
+                            return textMatches
+                                    || fileMatches;
+                        })
+                        .toList();
+
+
+        displayedPrivateMessages =
+                new ArrayList<>(
+                        filteredMessages
+                );
+
+
+        List<String> chatMessages =
+                filteredMessages.stream()
+                        .map(message -> {
+
+                            String sender;
+
+
+                            if (message.getSenderId()
+                                    == currentUser.getId()) {
+
+                                sender =
+                                        "You";
+
+                            } else {
+
+                                sender =
+                                        selectedUser
+                                                .getUsername();
+                            }
+
+
+                            String time = "";
+
+
+                            if (message.getSentAt() != null) {
+
+                                time =
+                                        message.getSentAt()
+                                                .format(
+                                                        TIME_FORMAT
+                                                );
+                            }
+
+
+                            String displayMessage;
+
+
+                            if (message.getFileName() != null
+                                    && !message.getFileName()
+                                    .isBlank()) {
+
+                                displayMessage =
+                                        "📎 "
+                                                + message
+                                                .getFileName();
+
+                            } else {
+
+                                displayMessage =
+                                        message.getMessage();
+                            }
+
+
+                            return sender
+                                    + "|"
+                                    + displayMessage
+                                    + "|"
+                                    + time;
+                        })
+                        .toList();
+
+
+        messageListView.setItems(
+                FXCollections.observableArrayList(
+                        chatMessages
+                )
+        );
+
+
+        messageListView.refresh();
+
+
+        if (!chatMessages.isEmpty()) {
+
+            messageListView.scrollTo(
+                    chatMessages.size() - 1
+            );
+        }
+    }
+
+
+    // =========================================================
+    // CLEAR MESSAGE SEARCH
+    // =========================================================
+
+    @FXML
+    private void handleClearMessageSearch() {
+
+        if (messageSearchField != null) {
+
+            messageSearchField.clear();
+        }
+
+
+        filterMessages();
     }
 
 
@@ -651,19 +2140,20 @@ public class ChatController {
             return;
         }
 
+
         List<Group> groups =
                 groupDAO.getGroupsForUser(
                         currentUser.getId()
                 );
 
+
         List<String> groupNames =
                 groups.stream()
-
                         .map(
                                 Group::getGroupName
                         )
-
                         .toList();
+
 
         groupListView.setItems(
                 FXCollections.observableArrayList(
@@ -684,15 +2174,18 @@ public class ChatController {
                         username
                 );
 
+
         if (connected) {
 
             System.out.println(
                     "Connected to real-time chat server."
             );
 
+
             socketClient.setMessageListener(
                     this::handleServerMessage
             );
+
 
         } else {
 
@@ -711,10 +2204,6 @@ public class ChatController {
             String serverMessage
     ) {
 
-        // =====================================================
-        // ONLINE USERS
-        // =====================================================
-
         if (serverMessage.startsWith(
                 "ONLINE_USERS|"
         )) {
@@ -727,9 +2216,17 @@ public class ChatController {
         }
 
 
-        // =====================================================
-        // GROUP CREATED
-        // =====================================================
+        if (serverMessage.startsWith(
+                "FILE_MESSAGE|"
+        )) {
+
+            handleIncomingFileMessage(
+                    serverMessage
+            );
+
+            return;
+        }
+
 
         if (serverMessage.startsWith(
                 "GROUP_CREATED|"
@@ -737,20 +2234,12 @@ public class ChatController {
 
             Platform.runLater(() -> {
 
-                System.out.println(
-                        "New group created. Refreshing groups..."
-                );
-
                 loadGroups();
             });
 
             return;
         }
 
-
-        // =====================================================
-        // GROUP MEMBER ADDED
-        // =====================================================
 
         if (serverMessage.startsWith(
                 "GROUP_MEMBER_ADDED|"
@@ -758,21 +2247,12 @@ public class ChatController {
 
             Platform.runLater(() -> {
 
-                System.out.println(
-                        "New member added to group. "
-                                + "Refreshing groups..."
-                );
-
                 loadGroups();
             });
 
             return;
         }
 
-
-        // =====================================================
-        // GROUP MEMBER REMOVED
-        // =====================================================
 
         if (serverMessage.startsWith(
                 "GROUP_MEMBER_REMOVED|"
@@ -780,10 +2260,18 @@ public class ChatController {
 
             Platform.runLater(() -> {
 
-                System.out.println(
-                        "Group member removed. "
-                                + "Refreshing groups..."
-                );
+                loadGroups();
+            });
+
+            return;
+        }
+
+
+        if (serverMessage.startsWith(
+                "GROUP_MEMBER_LEFT|"
+        )) {
+
+            Platform.runLater(() -> {
 
                 loadGroups();
             });
@@ -792,9 +2280,31 @@ public class ChatController {
         }
 
 
-        // =====================================================
-        // GROUP MESSAGE
-        // =====================================================
+        if (serverMessage.startsWith(
+                "GROUP_DELETED|"
+        )) {
+
+            Platform.runLater(() -> {
+
+                loadGroups();
+            });
+
+            return;
+        }
+
+
+        if (serverMessage.startsWith(
+                "GROUP_RENAMED|"
+        )) {
+
+            Platform.runLater(() -> {
+
+                loadGroups();
+            });
+
+            return;
+        }
+
 
         if (serverMessage.startsWith(
                 "GROUP_MESSAGE|"
@@ -808,10 +2318,6 @@ public class ChatController {
         }
 
 
-        // =====================================================
-        // GROUP MESSAGE SENT
-        // =====================================================
-
         if (serverMessage.equals(
                 "GROUP_MESSAGE_SENT"
         )) {
@@ -819,10 +2325,6 @@ public class ChatController {
             return;
         }
 
-
-        // =====================================================
-        // GROUP MEMBER ADDED SUCCESS
-        // =====================================================
 
         if (serverMessage.equals(
                 "GROUP_MEMBER_ADDED_SUCCESS"
@@ -832,10 +2334,6 @@ public class ChatController {
         }
 
 
-        // =====================================================
-        // MESSAGE SENT
-        // =====================================================
-
         if (serverMessage.equals(
                 "MESSAGE_SENT"
         )) {
@@ -844,9 +2342,13 @@ public class ChatController {
         }
 
 
-        // =====================================================
-        // USER OFFLINE
-        // =====================================================
+        if (serverMessage.equals(
+                "FILE_SENT"
+        )) {
+
+            return;
+        }
+
 
         if (serverMessage.startsWith(
                 "USER_OFFLINE|"
@@ -860,10 +2362,6 @@ public class ChatController {
         }
 
 
-        // =====================================================
-        // ERROR
-        // =====================================================
-
         if (serverMessage.startsWith(
                 "ERROR|"
         )) {
@@ -876,13 +2374,163 @@ public class ChatController {
         }
 
 
-        // =====================================================
-        // NORMAL PRIVATE MESSAGE
-        // =====================================================
-
         handleIncomingMessage(
                 serverMessage
         );
+    }
+
+
+    // =========================================================
+    // HANDLE INCOMING FILE MESSAGE
+    // =========================================================
+
+    private void handleIncomingFileMessage(
+            String serverMessage
+    ) {
+
+        try {
+
+            String[] parts =
+                    serverMessage.split(
+                            "\\|",
+                            5
+                    );
+
+
+            if (parts.length < 5) {
+
+                System.out.println(
+                        "Invalid incoming file message."
+                );
+
+                return;
+            }
+
+
+            final String senderUsername =
+                    parts[1].trim();
+
+
+            final String fileName =
+                    parts[2].trim();
+
+
+            final String fileType =
+                    parts[3].trim();
+
+
+            final String filePath =
+                    parts[4].trim();
+
+
+            File file =
+                    new File(
+                            filePath
+                    );
+
+
+            if (!file.exists()) {
+
+                System.out.println(
+                        "Received file path does not exist: "
+                                + filePath
+                );
+
+                return;
+            }
+
+
+            Platform.runLater(() -> {
+
+                boolean isCurrentChat =
+                        selectedUser != null
+                                && selectedUser
+                                .getUsername()
+                                .equals(
+                                        senderUsername
+                                );
+
+
+                if (isCurrentChat) {
+
+                    User sender =
+                            userDAO.findUserByUsername(
+                                    senderUsername
+                            );
+
+
+                    if (sender != null
+                            && currentUser != null) {
+
+                        messageDAO.markMessagesAsRead(
+                                currentUser.getId(),
+                                sender.getId()
+                        );
+                    }
+
+
+                    loadChatHistory();
+
+                    loadUsers();
+
+
+                } else {
+
+                    loadUsers();
+
+
+                    System.out.println(
+                            "Received file from "
+                                    + senderUsername
+                                    + ": "
+                                    + fileName
+                    );
+                }
+            });
+
+
+            System.out.println(
+                    "================================="
+            );
+
+            System.out.println(
+                    "FILE MESSAGE RECEIVED"
+            );
+
+            System.out.println(
+                    "From: "
+                            + senderUsername
+            );
+
+            System.out.println(
+                    "File: "
+                            + fileName
+            );
+
+            System.out.println(
+                    "Type: "
+                            + fileType
+            );
+
+            System.out.println(
+                    "Path: "
+                            + filePath
+            );
+
+            System.out.println(
+                    "================================="
+            );
+
+
+        } catch (Exception e) {
+
+            e.printStackTrace();
+
+            System.out.println(
+                    "Error handling incoming file: "
+                            + e.getMessage()
+            );
+        }
     }
 
 
@@ -899,13 +2547,16 @@ public class ChatController {
                         "ONLINE_USERS|".length()
                 );
 
+
         Set<String> updatedUsers =
                 new HashSet<>();
+
 
         if (!usersPart.isBlank()) {
 
             String[] users =
                     usersPart.split(",");
+
 
             for (String user : users) {
 
@@ -917,6 +2568,7 @@ public class ChatController {
                 }
             }
         }
+
 
         Platform.runLater(() -> {
 
@@ -941,18 +2593,33 @@ public class ChatController {
 
         selectedGroup = null;
 
-        membersButton.setVisible(false);
-        membersButton.setManaged(false);
+
+        if (messageSearchField != null) {
+
+            messageSearchField.clear();
+        }
+
+
+        membersButton.setVisible(
+                false
+        );
+
+        membersButton.setManaged(
+                false
+        );
+
 
         selectedUser =
                 userDAO.findUserByUsername(
                         selectedUsername
                 );
 
+
         if (selectedUser == null) {
 
             return;
         }
+
 
         if (currentUser != null) {
 
@@ -962,13 +2629,17 @@ public class ChatController {
             );
         }
 
+
         chatTitleLabel.setText(
                 "Chat with "
                         + selectedUser.getUsername()
         );
 
-        groupListView.getSelectionModel()
+
+        groupListView
+                .getSelectionModel()
                 .clearSelection();
+
 
         loadUsers();
 
@@ -988,13 +2659,27 @@ public class ChatController {
 
         selectedGroup = null;
 
-        membersButton.setVisible(true);
-        membersButton.setManaged(true);
+
+        if (messageSearchField != null) {
+
+            messageSearchField.clear();
+        }
+
+
+        membersButton.setVisible(
+                true
+        );
+
+        membersButton.setManaged(
+                true
+        );
+
 
         List<Group> groups =
                 groupDAO.getGroupsForUser(
                         currentUser.getId()
                 );
+
 
         for (Group group : groups) {
 
@@ -1007,25 +2692,32 @@ public class ChatController {
             }
         }
 
+
         if (selectedGroup == null) {
 
             return;
         }
+
 
         chatTitleLabel.setText(
                 "Group: "
                         + selectedGroup.getGroupName()
         );
 
-        userListView.getSelectionModel()
+
+        userListView
+                .getSelectionModel()
                 .clearSelection();
 
+
         loadGroupChatHistory();
+
 
         groupMessageDAO.markMessagesAsRead(
                 selectedGroup.getId(),
                 currentUser.getId()
         );
+
 
         System.out.println(
                 "Selected group: "
@@ -1046,63 +2738,21 @@ public class ChatController {
             return;
         }
 
+
         List<Message> messages =
                 messageDAO.getChatHistory(
                         currentUser.getId(),
                         selectedUser.getId()
                 );
 
-        List<String> chatMessages =
-                messages.stream()
 
-                        .map(message -> {
+        currentPrivateMessages =
+                new ArrayList<>(
+                        messages
+                );
 
-                            String sender;
 
-                            if (message.getSenderId()
-                                    == currentUser.getId()) {
-
-                                sender = "You";
-
-                            } else {
-
-                                sender =
-                                        selectedUser
-                                                .getUsername();
-                            }
-
-                            String time = "";
-
-                            if (message.getSentAt() != null) {
-
-                                time =
-                                        message.getSentAt()
-.format(
-                                                        TIME_FORMAT
-                                                );
-                            }
-
-                            return sender
-                                    + "|"
-                                    + message.getMessage()
-                                    + "|"
-                                    + time;
-                        })
-
-                        .toList();
-
-        messageListView.setItems(
-                FXCollections.observableArrayList(
-                        chatMessages
-                )
-        );
-
-        if (!chatMessages.isEmpty()) {
-
-            messageListView.scrollTo(
-                    chatMessages.size() - 1
-            );
-        }
+        filterMessages();
     }
 
 
@@ -1118,10 +2768,17 @@ public class ChatController {
             return;
         }
 
+
+        currentPrivateMessages.clear();
+
+        displayedPrivateMessages.clear();
+
+
         List<GroupMessage> messages =
                 groupMessageDAO.getGroupMessages(
                         selectedGroup.getId()
                 );
+
 
         List<String> groupMessages =
                 messages.stream()
@@ -1130,10 +2787,12 @@ public class ChatController {
 
                             String sender;
 
+
                             if (message.getSenderId()
                                     == currentUser.getId()) {
 
-                                sender = "You";
+                                sender =
+                                        "You";
 
                             } else {
 
@@ -1143,7 +2802,9 @@ public class ChatController {
                                         );
                             }
 
+
                             String time = "";
+
 
                             if (message.getSentAt() != null) {
 
@@ -1154,6 +2815,7 @@ public class ChatController {
                                                 );
                             }
 
+
                             return sender
                                     + "|"
                                     + message.getMessage()
@@ -1163,11 +2825,16 @@ public class ChatController {
 
                         .toList();
 
+
         messageListView.setItems(
                 FXCollections.observableArrayList(
                         groupMessages
                 )
         );
+
+
+        messageListView.refresh();
+
 
         if (!groupMessages.isEmpty()) {
 
@@ -1192,12 +2859,14 @@ public class ChatController {
             return;
         }
 
+
         if (selectedUser != null) {
 
             sendPrivateMessage();
 
             return;
         }
+
 
         chatTitleLabel.setText(
                 "Please select a user or group first"
@@ -1214,10 +2883,12 @@ public class ChatController {
         String text =
                 messageField.getText().trim();
 
+
         if (text.isEmpty()) {
 
             return;
         }
+
 
         if (!socketClient.isConnected()) {
 
@@ -1228,10 +2899,12 @@ public class ChatController {
             return;
         }
 
+
         socketClient.sendMessage(
                 selectedUser.getUsername(),
                 text
         );
+
 
         Message message =
                 new Message(
@@ -1240,16 +2913,19 @@ public class ChatController {
                         text
                 );
 
+
         boolean saved =
                 messageDAO.saveMessage(
                         message
                 );
+
 
         if (saved) {
 
             messageField.clear();
 
             loadChatHistory();
+
 
         } else {
 
@@ -1269,15 +2945,18 @@ public class ChatController {
         String text =
                 messageField.getText().trim();
 
+
         if (text.isEmpty()) {
 
             return;
         }
 
+
         if (selectedGroup == null) {
 
             return;
         }
+
 
         if (!socketClient.isConnected()) {
 
@@ -1288,6 +2967,7 @@ public class ChatController {
             return;
         }
 
+
         GroupMessage message =
                 new GroupMessage(
                         selectedGroup.getId(),
@@ -1295,10 +2975,12 @@ public class ChatController {
                         text
                 );
 
+
         boolean saved =
                 groupMessageDAO.saveMessage(
                         message
                 );
+
 
         if (!saved) {
 
@@ -1309,10 +2991,12 @@ public class ChatController {
             return;
         }
 
+
         socketClient.sendGroupMessage(
                 selectedGroup.getId(),
                 text
         );
+
 
         messageField.clear();
     }
@@ -1332,26 +3016,31 @@ public class ChatController {
                         2
                 );
 
+
         if (parts.length < 2) {
 
             return;
         }
 
+
         String senderUsername =
                 parts[0];
 
+
         String messageText =
                 parts[1];
+
 
         Platform.runLater(() -> {
 
             boolean isCurrentChat =
                     selectedUser != null
                             && selectedUser
-                                    .getUsername()
-                                    .equals(
-                                            senderUsername
-                                    );
+                            .getUsername()
+                            .equals(
+                                    senderUsername
+                            );
+
 
             if (isCurrentChat) {
 
@@ -1359,6 +3048,7 @@ public class ChatController {
                         userDAO.findUserByUsername(
                                 senderUsername
                         );
+
 
                 if (sender != null
                         && currentUser != null) {
@@ -1369,13 +3059,16 @@ public class ChatController {
                     );
                 }
 
+
                 loadChatHistory();
 
                 loadUsers();
 
+
             } else {
 
                 loadUsers();
+
 
                 System.out.println(
                         "Unread message from "
@@ -1402,12 +3095,15 @@ public class ChatController {
                         4
                 );
 
+
         if (parts.length < 4) {
 
             return;
         }
 
+
         int groupId;
+
 
         try {
 
@@ -1425,27 +3121,37 @@ public class ChatController {
             return;
         }
 
+
+        final int finalGroupId =
+                groupId;
+
+
         String senderUsername =
                 parts[2];
 
+
         String messageText =
                 parts[3];
+
 
         Platform.runLater(() -> {
 
             boolean isCurrentGroup =
                     selectedGroup != null
                             && selectedGroup.getId()
-                                    == groupId;
+                            == finalGroupId;
+
 
             if (isCurrentGroup) {
 
                 loadGroupChatHistory();
 
+
                 groupMessageDAO.markMessagesAsRead(
-                        groupId,
+                        finalGroupId,
                         currentUser.getId()
                 );
+
 
             } else {
 
@@ -1471,13 +3177,16 @@ public class ChatController {
         List<User> users =
                 userDAO.getAllUsers();
 
-        for (User user : users) {
+
+        for (User user :
+                users) {
 
             if (user.getId() == userId) {
 
                 return user.getUsername();
             }
         }
+
 
         return "User";
     }
@@ -1497,18 +3206,34 @@ public class ChatController {
                             Alert.AlertType.WARNING
                     );
 
-            alert.setTitle("No Group Selected");
-            alert.setHeaderText(null);
-            alert.setContentText("Please select a group first.");
+
+            alert.setTitle(
+                    "No Group Selected"
+            );
+
+
+            alert.setHeaderText(
+                    null
+            );
+
+
+            alert.setContentText(
+                    "Please select a group first."
+            );
+
+
             alert.showAndWait();
+
 
             return;
         }
+
 
         try {
 
             Connection connection =
                     DatabaseConnection.getConnection();
+
 
             GroupMembersController controller =
                     new GroupMembersController(
@@ -1520,24 +3245,38 @@ public class ChatController {
                             socketClient
                     );
 
+
             controller.show();
+
 
         } catch (Exception e) {
 
             e.printStackTrace();
+
 
             Alert alert =
                     new Alert(
                             Alert.AlertType.ERROR
                     );
 
-            alert.setTitle("Group Members");
-            alert.setHeaderText("Could not open group members");
+
+            alert.setTitle(
+                    "Group Members"
+            );
+
+
+            alert.setHeaderText(
+                    "Could not open group members"
+            );
+
+
             alert.setContentText(
                     e.getMessage() != null
                             ? e.getMessage()
                             : "Unknown error."
             );
+
+
             alert.showAndWait();
         }
     }
@@ -1555,20 +3294,19 @@ public class ChatController {
             return;
         }
 
+
         List<User> currentMembers =
                 groupDAO.getGroupMembers(
                         selectedGroup.getId()
                 );
 
 
-        // =====================================================
-        // GET EXISTING MEMBER IDs
-        // =====================================================
-
         Set<Integer> existingMemberIds =
                 new HashSet<>();
 
-        for (User member : currentMembers) {
+
+        for (User member :
+                currentMembers) {
 
             existingMemberIds.add(
                     member.getId()
@@ -1576,17 +3314,16 @@ public class ChatController {
         }
 
 
-        // =====================================================
-        // GET AVAILABLE USERS
-        // =====================================================
-
         List<User> allUsers =
                 userDAO.getAllUsers();
+
 
         List<User> availableUsers =
                 new ArrayList<>();
 
-        for (User user : allUsers) {
+
+        for (User user :
+                allUsers) {
 
             if (!existingMemberIds.contains(
                     user.getId()
@@ -1602,9 +3339,11 @@ public class ChatController {
         Dialog<ButtonType> dialog =
                 new Dialog<>();
 
+
         dialog.setTitle(
                 "Add Member"
         );
+
 
         dialog.setHeaderText(
                 "Add member to "
@@ -1618,11 +3357,13 @@ public class ChatController {
                         ButtonBar.ButtonData.OK_DONE
                 );
 
+
         ButtonType cancelButtonType =
                 new ButtonType(
                         "CANCEL",
                         ButtonBar.ButtonData.CANCEL_CLOSE
                 );
+
 
         dialog.getDialogPane()
                 .getButtonTypes()
@@ -1635,9 +3376,11 @@ public class ChatController {
         VBox content =
                 new VBox(10);
 
+
         content.setPadding(
                 new Insets(20)
         );
+
 
         content.setPrefWidth(
                 320
@@ -1648,6 +3391,7 @@ public class ChatController {
                 new Label(
                         "Select a user to add:"
                 );
+
 
         titleLabel.setStyle(
                 "-fx-font-size: 14px;"
@@ -1663,10 +3407,6 @@ public class ChatController {
                 new ArrayList<>();
 
 
-        // =====================================================
-        // NO AVAILABLE USERS
-        // =====================================================
-
         if (availableUsers.isEmpty()) {
 
             Label noUsersLabel =
@@ -1674,11 +3414,14 @@ public class ChatController {
                             "All users are already members."
                     );
 
+
             noUsersLabel.setStyle(
                     "-fx-text-fill: #64748b;"
             );
 
-            usersBox.getChildren()
+
+            usersBox
+                    .getChildren()
                     .add(
                             noUsersLabel
                     );
@@ -1693,19 +3436,24 @@ public class ChatController {
                                 user.getUsername()
                         );
 
+
                 checkBox.setUserData(
                         user
                 );
+
 
                 checkBox.setStyle(
                         "-fx-font-size: 14px;"
                 );
 
+
                 checkBoxes.add(
                         checkBox
                 );
 
-                usersBox.getChildren()
+
+                usersBox
+                        .getChildren()
                         .add(
                                 checkBox
                         );
@@ -1718,20 +3466,24 @@ public class ChatController {
                         usersBox
                 );
 
+
         scrollPane.setFitToWidth(
                 true
         );
 
+
         scrollPane.setPrefHeight(
                 180
         );
+
 
         scrollPane.setMaxHeight(
                 180
         );
 
 
-        content.getChildren()
+        content
+                .getChildren()
                 .addAll(
                         titleLabel,
                         scrollPane
@@ -1743,10 +3495,6 @@ public class ChatController {
                         content
                 );
 
-
-        // =====================================================
-        // ADD SELECTED USER
-        // =====================================================
 
         dialog.setResultConverter(
                 button -> {
@@ -1767,6 +3515,7 @@ public class ChatController {
                                                 checkBox
                                                         .getUserData();
 
+
                                 selectedUsers.add(
                                         user
                                 );
@@ -1781,19 +3530,24 @@ public class ChatController {
                                             Alert.AlertType.WARNING
                                     );
 
+
                             alert.setTitle(
                                     "No Member Selected"
                             );
+
 
                             alert.setHeaderText(
                                     null
                             );
 
+
                             alert.setContentText(
                                     "Please select at least one user."
                             );
 
+
                             alert.showAndWait();
+
 
                             return null;
                         }
@@ -1803,6 +3557,7 @@ public class ChatController {
                                 selectedUsers
                         );
                     }
+
 
                     return button;
                 }
@@ -1846,10 +3601,6 @@ public class ChatController {
                 addedMembers++;
 
 
-                // =================================================
-                // NOTIFY SERVER
-                // =================================================
-
                 socketClient.notifyGroupMemberAdded(
                         selectedGroup.getId(),
                         user.getId()
@@ -1858,16 +3609,8 @@ public class ChatController {
         }
 
 
-        // =====================================================
-        // REFRESH CURRENT GROUP
-        // =====================================================
-
         loadGroups();
 
-
-        // =====================================================
-        // SHOW RESULT
-        // =====================================================
 
         if (addedMembers > 0) {
 
@@ -1876,19 +3619,23 @@ public class ChatController {
                             Alert.AlertType.INFORMATION
                     );
 
+
             alert.setTitle(
                     "Member Added"
             );
 
+
             alert.setHeaderText(
                     "Member added successfully!"
             );
+
 
             alert.setContentText(
                     addedMembers
                             + " member(s) added to "
                             + selectedGroup.getGroupName()
             );
+
 
             alert.showAndWait();
 
@@ -1899,21 +3646,25 @@ public class ChatController {
                             Alert.AlertType.WARNING
                     );
 
+
             alert.setTitle(
                     "Member Not Added"
             );
+
 
             alert.setHeaderText(
                     null
             );
 
+
             alert.setContentText(
                     "No new members were added."
             );
 
+
             alert.showAndWait();
         }
-}
+    }
 
 
     // =========================================================
@@ -1930,19 +3681,24 @@ public class ChatController {
                             Alert.AlertType.ERROR
                     );
 
+
             alert.setTitle(
                     "Error"
             );
+
 
             alert.setHeaderText(
                     null
             );
 
+
             alert.setContentText(
                     "No logged-in user found."
             );
 
+
             alert.showAndWait();
+
 
             return;
         }
@@ -1951,16 +3707,20 @@ public class ChatController {
         Dialog<ButtonType> dialog =
                 new Dialog<>();
 
+
         dialog.setTitle(
                 "Create New Group"
         );
+
 
         dialog.setHeaderText(
                 "Create a new chat group"
         );
 
+
         DialogPane dialogPane =
                 dialog.getDialogPane();
+
 
         ButtonType createButton =
                 new ButtonType(
@@ -1968,60 +3728,62 @@ public class ChatController {
                         ButtonBar.ButtonData.OK_DONE
                 );
 
+
         ButtonType cancelButton =
                 new ButtonType(
                         "CANCEL",
                         ButtonBar.ButtonData.CANCEL_CLOSE
                 );
 
-        dialogPane.getButtonTypes()
+
+        dialogPane
+                .getButtonTypes()
                 .addAll(
                         createButton,
                         cancelButton
                 );
 
 
-        // =====================================================
-        // GROUP NAME
-        // =====================================================
-
         Label groupNameLabel =
                 new Label(
                         "Group Name"
                 );
 
+
         TextField groupNameField =
                 new TextField();
+
 
         groupNameField.setPromptText(
                 "Enter group name"
         );
 
 
-        // =====================================================
-        // MEMBER SELECTION
-        // =====================================================
-
         Label membersLabel =
                 new Label(
                         "Select Members"
                 );
 
+
         VBox membersBox =
                 new VBox(8);
+
 
         membersBox.setPadding(
                 new Insets(5)
         );
 
+
         List<CheckBox> memberCheckBoxes =
                 new ArrayList<>();
+
 
         List<User> users =
                 userDAO.getAllUsers();
 
 
-        for (User user : users) {
+        for (User user :
+                users) {
 
             if (user.getId()
                     == currentUser.getId()) {
@@ -2029,22 +3791,27 @@ public class ChatController {
                 continue;
             }
 
+
             CheckBox checkBox =
                     new CheckBox(
                             user.getUsername()
                     );
 
+
             checkBox.setUserData(
                     user
             );
+
 
             checkBox.setStyle(
                     "-fx-font-size: 14px;"
             );
 
+
             memberCheckBoxes.add(
                     checkBox
             );
+
 
             membersBox
                     .getChildren()
@@ -2061,9 +3828,11 @@ public class ChatController {
                             "No other users available."
                     );
 
+
             noUsersLabel.setStyle(
                     "-fx-text-fill: #6b7280;"
             );
+
 
             membersBox
                     .getChildren()
@@ -2078,13 +3847,16 @@ public class ChatController {
                         membersBox
                 );
 
+
         scrollPane.setFitToWidth(
                 true
         );
 
+
         scrollPane.setPrefHeight(
                 150
         );
+
 
         scrollPane.setMaxHeight(
                 150
@@ -2094,15 +3866,19 @@ public class ChatController {
         VBox content =
                 new VBox(10);
 
+
         content.setPadding(
                 new Insets(20)
         );
+
 
         content.setPrefWidth(
                 350
         );
 
-        content.getChildren()
+
+        content
+                .getChildren()
                 .addAll(
                         groupNameLabel,
                         groupNameField,
@@ -2110,14 +3886,11 @@ public class ChatController {
                         scrollPane
                 );
 
+
         dialogPane.setContent(
                 content
         );
 
-
-        // =====================================================
-        // CREATE BUTTON
-        // =====================================================
 
         dialog.setResultConverter(
                 button -> {
@@ -2137,26 +3910,30 @@ public class ChatController {
                                             Alert.AlertType.WARNING
                                     );
 
+
                             alert.setTitle(
                                     "Invalid Group Name"
                             );
+
 
                             alert.setHeaderText(
                                     null
                             );
 
+
                             alert.setContentText(
                                     "Please enter a group name."
                             );
 
+
                             alert.showAndWait();
+
 
                             return null;
                         }
 
 
-                        List<User>
-                                selectedMembers =
+                        List<User> selectedMembers =
                                 new ArrayList<>();
 
 
@@ -2170,6 +3947,7 @@ public class ChatController {
                                                 checkBox
                                                         .getUserData();
 
+
                                 selectedMembers.add(
                                         user
                                 );
@@ -2182,6 +3960,7 @@ public class ChatController {
                                 selectedMembers
                         );
                     }
+
 
                     return button;
                 }
@@ -2223,19 +4002,24 @@ public class ChatController {
                                 Alert.AlertType.ERROR
                         );
 
+
                 alert.setTitle(
                         "Create Group Failed"
                 );
+
 
                 alert.setHeaderText(
                         null
                 );
 
+
                 alert.setContentText(
                         "Could not create the group."
                 );
 
+
                 alert.showAndWait();
+
 
                 return;
             }
@@ -2252,6 +4036,7 @@ public class ChatController {
                                 group.getId(),
                                 user.getId()
                         );
+
 
                 if (added) {
 
@@ -2273,13 +4058,16 @@ public class ChatController {
                             Alert.AlertType.INFORMATION
                     );
 
+
             alert.setTitle(
                     "Group Created"
             );
 
+
             alert.setHeaderText(
                     "Group created successfully!"
             );
+
 
             alert.setContentText(
                     "Group: "
@@ -2292,6 +4080,7 @@ public class ChatController {
                             + currentUser.getUsername()
             );
 
+
             alert.showAndWait();
 
 
@@ -2299,22 +4088,27 @@ public class ChatController {
 
             e.printStackTrace();
 
+
             Alert alert =
                     new Alert(
                             Alert.AlertType.ERROR
                     );
 
+
             alert.setTitle(
                     "Error"
             );
+
 
             alert.setHeaderText(
                     "Could not create group"
             );
 
+
             alert.setContentText(
                     e.getMessage()
             );
+
 
             alert.showAndWait();
         }
@@ -2337,18 +4131,25 @@ public class ChatController {
                             )
                     );
 
+
             Parent root =
                     loader.load();
 
+
             ProfileController profileController =
                     loader.getController();
+
 
             profileController.setUser(
                     currentUser
             );
 
+
             Scene scene =
-                    new Scene(root);
+                    new Scene(
+                            root
+                    );
+
 
             if (getClass()
                     .getResource(
@@ -2364,18 +4165,26 @@ public class ChatController {
                 );
             }
 
+
             Stage stage =
-                    (Stage) welcomeLabel
-                            .getScene()
-                            .getWindow();
+                    (Stage)
+                            welcomeLabel
+                                    .getScene()
+                                    .getWindow();
+
 
             stage.setTitle(
                     "Chat Application - My Profile"
             );
 
-            stage.setScene(scene);
+
+            stage.setScene(
+                    scene
+            );
+
 
             stage.show();
+
 
         } catch (Exception e) {
 
@@ -2383,7 +4192,108 @@ public class ChatController {
                     "Unable to open profile page."
             );
 
+
             e.printStackTrace();
+        }
+    }
+
+
+    // =========================================================
+    // OPEN SETTINGS
+    // =========================================================
+
+    @FXML
+    private void handleSettings() {
+
+        try {
+
+            FXMLLoader loader =
+                    new FXMLLoader(
+                            getClass().getResource(
+                                    "/fxml/settings.fxml"
+                            )
+                    );
+
+
+            Parent root =
+                    loader.load();
+
+
+            Scene scene =
+                    new Scene(
+                            root
+                    );
+
+
+            if (getClass()
+                    .getResource(
+                            "/css/settings.css"
+                    ) != null) {
+
+                scene.getStylesheets().add(
+                        getClass()
+                                .getResource(
+                                        "/css/settings.css"
+                                )
+                                .toExternalForm()
+                );
+            }
+
+
+            Stage stage =
+                    (Stage)
+                            welcomeLabel
+                                    .getScene()
+                                    .getWindow();
+
+
+            stage.setTitle(
+                    "Chat Application - Settings"
+            );
+
+
+            stage.setScene(
+                    scene
+            );
+
+
+            stage.show();
+
+
+        } catch (Exception e) {
+
+            System.out.println(
+                    "Unable to open settings page."
+            );
+
+
+            e.printStackTrace();
+
+
+            Alert alert =
+                    new Alert(
+                            Alert.AlertType.ERROR
+                    );
+
+
+            alert.setTitle(
+                    "Settings Error"
+            );
+
+
+            alert.setHeaderText(
+                    "Unable to open Settings"
+            );
+
+
+            alert.setContentText(
+                    e.getMessage() != null
+                            ? e.getMessage()
+                            : "Unknown error."
+            );
+
+
+            alert.showAndWait();
         }
     }
 
@@ -2394,6 +4304,13 @@ public class ChatController {
 
     @FXML
     private void handleLogout() {
+
+        if (emojiPopup != null
+                && emojiPopup.isShowing()) {
+
+            emojiPopup.hide();
+        }
+
 
         socketClient.disconnect();
 
@@ -2413,7 +4330,9 @@ public class ChatController {
 
 
             Scene scene =
-                    new Scene(root);
+                    new Scene(
+                            root
+                    );
 
 
             scene.getStylesheets().add(
@@ -2437,7 +4356,9 @@ public class ChatController {
             );
 
 
-            stage.setScene(scene);
+            stage.setScene(
+                    scene
+            );
 
 
             stage.setWidth(
@@ -2469,6 +4390,7 @@ public class ChatController {
             System.out.println(
                     "Unable to return to login page."
             );
+
 
             e.printStackTrace();
         }

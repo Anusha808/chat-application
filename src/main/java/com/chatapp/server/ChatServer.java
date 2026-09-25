@@ -13,11 +13,23 @@ public class ChatServer {
     private static final Map<String, ClientHandler> connectedUsers =
             new ConcurrentHashMap<>();
 
+    // =========================================================
+    // START SERVER
+    // =========================================================
+
     public static void main(String[] args) {
 
-        System.out.println("=================================");
-        System.out.println("     Chat Server Starting...");
-        System.out.println("=================================");
+        System.out.println(
+                "================================="
+        );
+
+        System.out.println(
+                "     Chat Server Starting..."
+        );
+
+        System.out.println(
+                "================================="
+        );
 
         try (ServerSocket serverSocket =
                      new ServerSocket(PORT)) {
@@ -28,7 +40,8 @@ public class ChatServer {
 
             System.out.println(
                     "Waiting for clients on port "
-                            + PORT + "..."
+                            + PORT
+                            + "..."
             );
 
             while (true) {
@@ -42,10 +55,14 @@ public class ChatServer {
                 );
 
                 ClientHandler clientHandler =
-                        new ClientHandler(clientSocket);
+                        new ClientHandler(
+                                clientSocket
+                        );
 
                 Thread clientThread =
-                        new Thread(clientHandler);
+                        new Thread(
+                                clientHandler
+                        );
 
                 clientThread.start();
             }
@@ -61,6 +78,10 @@ public class ChatServer {
         }
     }
 
+    // =========================================================
+    // ADD USER
+    // =========================================================
+
     public static void addUser(
             String username,
             ClientHandler clientHandler
@@ -72,7 +93,8 @@ public class ChatServer {
         );
 
         System.out.println(
-                "User connected: " + username
+                "User connected: "
+                        + username
         );
 
         System.out.println(
@@ -83,13 +105,19 @@ public class ChatServer {
         broadcastOnlineUsers();
     }
 
+    // =========================================================
+    // REMOVE USER
+    // =========================================================
+
     public static void removeUser(
             String username
     ) {
 
         if (username != null) {
 
-            connectedUsers.remove(username);
+            connectedUsers.remove(
+                    username
+            );
 
             System.out.println(
                     "User disconnected: "
@@ -105,24 +133,45 @@ public class ChatServer {
         }
     }
 
+    // =========================================================
+    // GET USER
+    // =========================================================
+
     public static ClientHandler getUser(
             String username
     ) {
 
-        return connectedUsers.get(username);
+        return connectedUsers.get(
+                username
+        );
     }
+
+    // =========================================================
+    // CHECK USER ONLINE
+    // =========================================================
 
     public static boolean isUserOnline(
             String username
     ) {
 
-        return connectedUsers.containsKey(username);
+        return connectedUsers.containsKey(
+                username
+        );
     }
 
-    public static Map<String, ClientHandler> getConnectedUsers() {
+    // =========================================================
+    // GET CONNECTED USERS
+    // =========================================================
+
+    public static Map<String, ClientHandler>
+    getConnectedUsers() {
 
         return connectedUsers;
     }
+
+    // =========================================================
+    // BROADCAST ONLINE USERS
+    // =========================================================
 
     private static void broadcastOnlineUsers() {
 
@@ -133,12 +182,15 @@ public class ChatServer {
                 );
 
         String message =
-                "ONLINE_USERS|" + onlineUsers;
+                "ONLINE_USERS|"
+                        + onlineUsers;
 
         for (ClientHandler client :
                 connectedUsers.values()) {
 
-            client.sendMessage(message);
+            client.sendMessage(
+                    message
+            );
         }
     }
 }
