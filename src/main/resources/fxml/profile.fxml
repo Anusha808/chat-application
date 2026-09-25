@@ -1,0 +1,393 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Priority?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.chatapp.controller.ProfileController"
+            prefWidth="900"
+            prefHeight="600"
+            styleClass="profile-container">
+
+
+    <!-- =====================================================
+         TOP HEADER
+         ===================================================== -->
+
+    <top>
+
+        <HBox alignment="CENTER_LEFT"
+              spacing="15"
+              styleClass="profile-header">
+
+            <padding>
+
+                <Insets top="18"
+                        right="25"
+                        bottom="18"
+                        left="25"/>
+
+            </padding>
+
+
+            <!-- TITLE -->
+
+            <Label text="MY PROFILE"
+                   styleClass="profile-header-title"/>
+
+
+            <!-- SPACE -->
+
+            <HBox HBox.hgrow="ALWAYS"/>
+
+
+            <!-- BACK TO CHAT -->
+
+            <Button fx:id="backButton"
+                    text="←  BACK TO CHAT"
+                    onAction="#handleBackToChat"
+                    styleClass="back-button"/>
+
+        </HBox>
+
+    </top>
+
+
+    <!-- =====================================================
+         CENTER - SCROLLABLE PROFILE
+         ===================================================== -->
+
+    <center>
+
+        <ScrollPane fx:id="profileScroll"
+                    fitToWidth="true"
+                    fitToHeight="false"
+                    hbarPolicy="NEVER"
+                    vbarPolicy="AS_NEEDED"
+                    pannable="true"
+                    styleClass="profile-scroll">
+
+
+            <content>
+
+                <VBox alignment="TOP_CENTER"
+                      spacing="25"
+                      styleClass="profile-content">
+
+                    <padding>
+
+                        <Insets top="30"
+                                right="30"
+                                bottom="30"
+                                left="30"/>
+
+                    </padding>
+
+
+                    <!-- =================================================
+                         PROFILE CARD
+                         ================================================= -->
+
+                    <VBox maxWidth="600"
+                          alignment="TOP_CENTER"
+                          spacing="20"
+                          styleClass="profile-card">
+
+
+                        <!-- =============================================
+                             AVATAR
+                             ============================================= -->
+
+                        <Label fx:id="avatarLabel"
+                               text="A"
+                               styleClass="profile-avatar"/>
+
+
+                        <!-- =============================================
+                             USERNAME
+                             ============================================= -->
+
+                        <Label fx:id="usernameLabel"
+                               text="Username"
+                               styleClass="profile-name"/>
+
+
+                        <!-- =============================================
+                             STATUS
+                             ============================================= -->
+
+                        <HBox alignment="CENTER"
+                              spacing="6">
+
+                            <Label text="●"
+                                   styleClass="status-dot"/>
+
+                            <Label fx:id="statusLabel"
+                                   text="ONLINE"
+                                   styleClass="status-label"/>
+
+                        </HBox>
+
+
+                        <!-- =============================================
+                             SEPARATOR
+                             ============================================= -->
+
+                        <Separator
+                                prefWidth="500"/>
+
+
+                        <!-- =============================================
+                             ACCOUNT INFORMATION TITLE
+                             ============================================= -->
+
+                        <Label text="ACCOUNT INFORMATION"
+                               styleClass="section-title"/>
+
+
+                        <!-- =============================================
+                             USER ID
+                             ============================================= -->
+
+                        <HBox maxWidth="500"
+                              styleClass="info-row">
+
+                            <Label text="User ID"
+                                   styleClass="info-title"/>
+
+                            <Label fx:id="userIdLabel"
+                                   text="12345"
+                                   styleClass="info-value"/>
+
+                        </HBox>
+
+
+                        <!-- =============================================
+                             EMAIL
+                             ============================================= -->
+
+                        <HBox maxWidth="500"
+                              styleClass="info-row">
+
+                            <Label text="Email"
+                                   styleClass="info-title"/>
+
+                            <Label fx:id="emailLabel"
+                                   text="example@gmail.com"
+                                   styleClass="info-value"/>
+
+                        </HBox>
+
+
+                        <!-- =============================================
+                             EDIT PROFILE BUTTON
+                             ============================================= -->
+
+                        <Button fx:id="editProfileButton"
+                                text="EDIT PROFILE"
+                                onAction="#handleEditProfile"
+                                styleClass="primary-button"/>
+
+
+                        <!-- =================================================
+                             EDIT PROFILE SECTION
+                             ================================================= -->
+
+                        <VBox fx:id="editProfileSection"
+                              maxWidth="500"
+                              alignment="TOP_CENTER"
+                              spacing="18"
+                              visible="false"
+                              managed="false"
+                              styleClass="edit-profile-section">
+
+
+                            <!-- =============================================
+                                 EDIT PROFILE TITLE
+                                 ============================================= -->
+
+                            <Label text="EDIT PROFILE"
+                                   styleClass="section-title"/>
+
+
+                            <!-- =============================================
+                                 USERNAME FIELD
+                                 ============================================= -->
+
+                            <VBox maxWidth="500"
+                                  spacing="8">
+
+                                <Label text="USERNAME"
+                                       styleClass="field-label"/>
+
+                                <TextField fx:id="usernameField"
+                                           promptText="Enter username"
+                                           styleClass="profile-field"/>
+
+                            </VBox>
+
+
+                            <!-- =============================================
+                                 EMAIL FIELD
+                                 ============================================= -->
+
+                            <VBox maxWidth="500"
+                                  spacing="8">
+
+                                <Label text="EMAIL"
+                                       styleClass="field-label"/>
+
+                                <TextField fx:id="emailField"
+                                           promptText="Enter email address"
+                                           styleClass="profile-field"/>
+
+                            </VBox>
+
+
+                            <!-- =============================================
+                                 SAVE / CANCEL BUTTONS
+                                 ============================================= -->
+
+                            <HBox alignment="CENTER"
+                                  spacing="12">
+
+                                <Button fx:id="saveProfileButton"
+                                        text="SAVE CHANGES"
+                                        onAction="#handleSaveProfile"
+                                        styleClass="primary-button"/>
+
+                                <Button fx:id="cancelEditButton"
+                                        text="CANCEL"
+                                        onAction="#handleCancelEdit"
+                                        styleClass="secondary-button"/>
+
+                            </HBox>
+
+
+                            <!-- =============================================
+                                 SEPARATOR
+                                 ============================================= -->
+
+                            <Separator
+                                    prefWidth="460"/>
+
+
+                            <!-- =============================================
+                                 CHANGE PASSWORD TITLE
+                                 ============================================= -->
+
+                            <Label text="CHANGE PASSWORD"
+                                   styleClass="section-title"/>
+
+
+                            <!-- =============================================
+                                 CURRENT PASSWORD
+                                 ============================================= -->
+
+                            <VBox maxWidth="500"
+                                  spacing="8">
+
+                                <Label text="CURRENT PASSWORD"
+                                       styleClass="field-label"/>
+
+                                <PasswordField fx:id="currentPasswordField"
+                                               promptText="Enter current password"
+                                               styleClass="profile-field"/>
+
+                            </VBox>
+
+
+                            <!-- =============================================
+                                 NEW PASSWORD
+                                 ============================================= -->
+
+                            <VBox maxWidth="500"
+                                  spacing="8">
+
+                                <Label text="NEW PASSWORD"
+                                       styleClass="field-label"/>
+
+                                <PasswordField fx:id="newPasswordField"
+                                               promptText="Enter new password"
+                                               styleClass="profile-field"/>
+
+                            </VBox>
+
+
+                            <!-- =============================================
+                                 CONFIRM PASSWORD
+                                 ============================================= -->
+
+                            <VBox maxWidth="500"
+                                  spacing="8">
+
+                                <Label text="CONFIRM NEW PASSWORD"
+                                       styleClass="field-label"/>
+
+                                <PasswordField fx:id="confirmPasswordField"
+                                               promptText="Confirm new password"
+                                               styleClass="profile-field"/>
+
+                            </VBox>
+
+
+                            <!-- =============================================
+                                 CHANGE PASSWORD BUTTON
+                                 ============================================= -->
+
+                            <Button fx:id="changePasswordButton"
+                                    text="CHANGE PASSWORD"
+                                    onAction="#handleChangePassword"
+                                    styleClass="password-button"/>
+
+                        </VBox>
+
+
+                    </VBox>
+
+                </VBox>
+
+            </content>
+
+        </ScrollPane>
+
+    </center>
+
+
+    <!-- =====================================================
+         FOOTER
+         ===================================================== -->
+
+    <bottom>
+
+        <HBox alignment="CENTER"
+              styleClass="profile-footer">
+
+            <padding>
+
+                <Insets top="10"
+                        right="10"
+                        bottom="10"
+                        left="10"/>
+
+            </padding>
+
+            <Label text="Chat Application"
+                   styleClass="footer-text"/>
+
+        </HBox>
+
+    </bottom>
+
+
+</BorderPane>

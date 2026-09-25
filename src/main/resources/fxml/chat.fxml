@@ -37,17 +37,32 @@
             </padding>
 
 
+            <!-- APPLICATION TITLE -->
+
             <Label text="💬 CHAT APPLICATION"
                    styleClass="header-title"/>
 
+
+            <!-- WELCOME USER -->
 
             <Label fx:id="welcomeLabel"
                    text="Welcome!"
                    styleClass="welcome-label"/>
 
 
+            <!-- SPACER -->
+
             <HBox HBox.hgrow="ALWAYS"/>
 
+
+            <!-- PROFILE BUTTON -->
+
+            <Button text="PROFILE"
+                    onAction="#handleProfile"
+                    styleClass="profile-button"/>
+
+
+            <!-- LOGOUT BUTTON -->
 
             <Button text="LOGOUT"
                     onAction="#handleLogout"
@@ -103,6 +118,8 @@
                        HBox.hgrow="ALWAYS"/>
 
 
+                <!-- CREATE GROUP -->
+
                 <Button text="+"
                         onAction="#handleCreateGroup"
                         styleClass="create-group-button"
@@ -111,6 +128,8 @@
 
             </HBox>
 
+
+            <!-- GROUP LIST -->
 
             <ListView fx:id="groupListView"
                       prefHeight="150"
@@ -208,11 +227,15 @@
                     </padding>
 
 
+                    <!-- MESSAGE FIELD -->
+
                     <TextField fx:id="messageField"
                                promptText="Type your message..."
                                HBox.hgrow="ALWAYS"
                                styleClass="message-field"/>
 
+
+                    <!-- SEND BUTTON -->
 
                     <Button text="SEND"
                             onAction="#handleSendMessage"

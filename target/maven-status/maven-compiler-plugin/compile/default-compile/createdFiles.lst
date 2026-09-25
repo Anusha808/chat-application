@@ -1,4 +1,7 @@
+com\chatapplication\network\MessageType.class
 com\chatapp\server\ChatServer.class
+com\chatapp\controller\AddMemberController.class
+com\chatapplication\network\GroupMemberNotification.class
 com\chatapp\controller\RegisterController.class
 com\chatapp\server\ChatClientTest.class
 com\chatapp\model\Message.class
@@ -10,13 +13,19 @@ com\chatapp\model\User.class
 com\chatapp\dao\GroupDAO.class
 com\chatapp\dao\MessageDAO.class
 com\chatapp\controller\ChatController$1.class
+com\chatapp\controller\AddMemberController$1.class
 com\chatapp\controller\LoginController.class
 com\chatapp\dao\UserDAO.class
 com\chatapp\client\ChatSocketClient.class
 com\chatapp\model\GroupMessage.class
 com\chatapp\server\ClientHandler.class
+com\chatapp\controller\GroupMembersController.class
 com\chatapp\database\DatabaseTest.class
 com\chatapp\controller\ChatController.class
+com\chatapp\controller\ProfileController.class
 com\chatapp\dao\GroupMessageDAO.class
 com\chatapp\dao\UserDAOTest.class
 com\chatapp\controller\ChatController$2.class
+com\chatapp\model\GroupMember.class
+com\chatapp\dao\GroupMemberDAO.class
+com\chatapp\controller\AddMemberController$2.class

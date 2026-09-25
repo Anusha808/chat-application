@@ -1,8 +1,12 @@
 C:\Users\Admin\Downloads\chat-application\src\main\java\com\chatapp\client\ChatSocketClient.java
+C:\Users\Admin\Downloads\chat-application\src\main\java\com\chatapp\controller\AddMemberController.java
 C:\Users\Admin\Downloads\chat-application\src\main\java\com\chatapp\controller\ChatController.java
+C:\Users\Admin\Downloads\chat-application\src\main\java\com\chatapp\controller\GroupMembersController.java
 C:\Users\Admin\Downloads\chat-application\src\main\java\com\chatapp\controller\LoginController.java
+C:\Users\Admin\Downloads\chat-application\src\main\java\com\chatapp\controller\ProfileController.java
 C:\Users\Admin\Downloads\chat-application\src\main\java\com\chatapp\controller\RegisterController.java
 C:\Users\Admin\Downloads\chat-application\src\main\java\com\chatapp\dao\GroupDAO.java
+C:\Users\Admin\Downloads\chat-application\src\main\java\com\chatapp\dao\GroupMemberDAO.java
 C:\Users\Admin\Downloads\chat-application\src\main\java\com\chatapp\dao\GroupMessageDAO.java
 C:\Users\Admin\Downloads\chat-application\src\main\java\com\chatapp\dao\MessageDAO.java
 C:\Users\Admin\Downloads\chat-application\src\main\java\com\chatapp\dao\MessageDAOTest.java
@@ -12,9 +16,12 @@ C:\Users\Admin\Downloads\chat-application\src\main\java\com\chatapp\database\Dat
 C:\Users\Admin\Downloads\chat-application\src\main\java\com\chatapp\database\DatabaseTest.java
 C:\Users\Admin\Downloads\chat-application\src\main\java\com\chatapp\Main.java
 C:\Users\Admin\Downloads\chat-application\src\main\java\com\chatapp\model\Group.java
+C:\Users\Admin\Downloads\chat-application\src\main\java\com\chatapp\model\GroupMember.java
 C:\Users\Admin\Downloads\chat-application\src\main\java\com\chatapp\model\GroupMessage.java
 C:\Users\Admin\Downloads\chat-application\src\main\java\com\chatapp\model\Message.java
 C:\Users\Admin\Downloads\chat-application\src\main\java\com\chatapp\model\User.java
+C:\Users\Admin\Downloads\chat-application\src\main\java\com\chatapp\network\GroupMemberNotification.java
+C:\Users\Admin\Downloads\chat-application\src\main\java\com\chatapp\network\MessageType.java
 C:\Users\Admin\Downloads\chat-application\src\main\java\com\chatapp\server\ChatClientTest.java
 C:\Users\Admin\Downloads\chat-application\src\main\java\com\chatapp\server\ChatServer.java
 C:\Users\Admin\Downloads\chat-application\src\main\java\com\chatapp\server\ClientHandler.java

@@ -10,6 +10,10 @@ import java.sql.SQLException;
 
 public class UserDAO {
 
+    // ==========================================
+    // REGISTER USER
+    // ==========================================
+
     public boolean registerUser(User user) {
 
         String sql = """
@@ -17,24 +21,51 @@ public class UserDAO {
                 VALUES (?, ?, ?)
                 """;
 
-        try (Connection connection = DatabaseConnection.getConnection();
-             PreparedStatement statement = connection.prepareStatement(sql)) {
+        try (Connection connection =
+                     DatabaseConnection.getConnection();
+             PreparedStatement statement =
+                     connection.prepareStatement(sql)) {
 
-            statement.setString(1, user.getUsername());
-            statement.setString(2, user.getEmail());
-            statement.setString(3, user.getPassword());
+            statement.setString(
+                    1,
+                    user.getUsername()
+            );
 
-            int rowsInserted = statement.executeUpdate();
+            statement.setString(
+                    2,
+                    user.getEmail()
+            );
+
+            statement.setString(
+                    3,
+                    user.getPassword()
+            );
+
+            int rowsInserted =
+                    statement.executeUpdate();
 
             return rowsInserted > 0;
 
         } catch (SQLException e) {
-            System.out.println("Registration failed: " + e.getMessage());
+
+            System.out.println(
+                    "Registration failed: "
+                            + e.getMessage()
+            );
+
             return false;
         }
     }
 
-    public User loginUser(String username, String password) {
+
+    // ==========================================
+    // LOGIN USER
+    // ==========================================
+
+    public User loginUser(
+            String username,
+            String password
+    ) {
 
         String sql = """
                 SELECT id, username, email, password
@@ -42,13 +73,23 @@ public class UserDAO {
                 WHERE username = ? AND password = ?
                 """;
 
-        try (Connection connection = DatabaseConnection.getConnection();
-             PreparedStatement statement = connection.prepareStatement(sql)) {
+        try (Connection connection =
+                     DatabaseConnection.getConnection();
+             PreparedStatement statement =
+                     connection.prepareStatement(sql)) {
 
-            statement.setString(1, username);
-            statement.setString(2, password);
+            statement.setString(
+                    1,
+                    username
+            );
 
-            ResultSet resultSet = statement.executeQuery();
+            statement.setString(
+                    2,
+                    password
+            );
+
+            ResultSet resultSet =
+                    statement.executeQuery();
 
             if (resultSet.next()) {
 
@@ -61,13 +102,24 @@ public class UserDAO {
             }
 
         } catch (SQLException e) {
-            System.out.println("Login failed: " + e.getMessage());
+
+            System.out.println(
+                    "Login failed: "
+                            + e.getMessage()
+            );
         }
 
         return null;
     }
 
-    public User findUserByUsername(String username) {
+
+    // ==========================================
+    // FIND USER BY USERNAME
+    // ==========================================
+
+    public User findUserByUsername(
+            String username
+    ) {
 
         String sql = """
                 SELECT id, username, email, password
@@ -75,12 +127,18 @@ public class UserDAO {
                 WHERE username = ?
                 """;
 
-        try (Connection connection = DatabaseConnection.getConnection();
-             PreparedStatement statement = connection.prepareStatement(sql)) {
+        try (Connection connection =
+                     DatabaseConnection.getConnection();
+             PreparedStatement statement =
+                     connection.prepareStatement(sql)) {
 
-            statement.setString(1, username);
+            statement.setString(
+                    1,
+                    username
+            );
 
-            ResultSet resultSet = statement.executeQuery();
+            ResultSet resultSet =
+                    statement.executeQuery();
 
             if (resultSet.next()) {
 
@@ -93,44 +151,165 @@ public class UserDAO {
             }
 
         } catch (SQLException e) {
-            System.out.println("Error finding user: " + e.getMessage());
+
+            System.out.println(
+                    "Error finding user: "
+                            + e.getMessage()
+            );
         }
 
         return null;
     }
+
+
+    // ==========================================
+    // GET ALL USERS
+    // ==========================================
+
     public java.util.List<User> getAllUsers() {
 
-    java.util.List<User> users = new java.util.ArrayList<>();
+        java.util.List<User> users =
+                new java.util.ArrayList<>();
 
-    String sql = """
-            SELECT id, username, email, password
-            FROM users
-            ORDER BY username
-            """;
+        String sql = """
+                SELECT id, username, email, password
+                FROM users
+                ORDER BY username
+                """;
 
-    try (Connection connection = DatabaseConnection.getConnection();
-         PreparedStatement statement = connection.prepareStatement(sql);
-         ResultSet resultSet = statement.executeQuery()) {
+        try (Connection connection =
+                     DatabaseConnection.getConnection();
+             PreparedStatement statement =
+                     connection.prepareStatement(sql);
+             ResultSet resultSet =
+                     statement.executeQuery()) {
 
-        while (resultSet.next()) {
+            while (resultSet.next()) {
 
-            User user = new User(
-                    resultSet.getInt("id"),
-                    resultSet.getString("username"),
-                    resultSet.getString("email"),
-                    resultSet.getString("password")
+                User user = new User(
+                        resultSet.getInt("id"),
+                        resultSet.getString("username"),
+                        resultSet.getString("email"),
+                        resultSet.getString("password")
+                );
+
+                users.add(user);
+            }
+
+        } catch (SQLException e) {
+
+            System.out.println(
+                    "Error loading users: "
+                            + e.getMessage()
             );
-
-            users.add(user);
         }
 
-    } catch (SQLException e) {
-
-        System.out.println(
-                "Error loading users: " + e.getMessage()
-        );
+        return users;
     }
 
-    return users;
-}
+
+    // ==========================================
+    // UPDATE USER PROFILE
+    // ==========================================
+
+    public boolean updateUserProfile(
+            int userId,
+            String username,
+            String email
+    ) {
+
+        String sql = """
+                UPDATE users
+                SET username = ?, email = ?
+                WHERE id = ?
+                """;
+
+        try (Connection connection =
+                     DatabaseConnection.getConnection();
+             PreparedStatement statement =
+                     connection.prepareStatement(sql)) {
+
+            statement.setString(
+                    1,
+                    username
+            );
+
+            statement.setString(
+                    2,
+                    email
+            );
+
+            statement.setInt(
+                    3,
+                    userId
+            );
+
+            int rowsUpdated =
+                    statement.executeUpdate();
+
+            return rowsUpdated > 0;
+
+        } catch (SQLException e) {
+
+            System.out.println(
+                    "Profile update failed: "
+                            + e.getMessage()
+            );
+
+            return false;
+        }
+    }
+
+
+    // ==========================================
+    // CHANGE PASSWORD
+    // ==========================================
+
+    public boolean changePassword(
+            int userId,
+            String currentPassword,
+            String newPassword
+    ) {
+
+        String sql = """
+                UPDATE users
+                SET password = ?
+                WHERE id = ? AND password = ?
+                """;
+
+        try (Connection connection =
+                     DatabaseConnection.getConnection();
+             PreparedStatement statement =
+                     connection.prepareStatement(sql)) {
+
+            statement.setString(
+                    1,
+                    newPassword
+            );
+
+            statement.setInt(
+                    2,
+                    userId
+            );
+
+            statement.setString(
+                    3,
+                    currentPassword
+            );
+
+            int rowsUpdated =
+                    statement.executeUpdate();
+
+            return rowsUpdated > 0;
+
+        } catch (SQLException e) {
+
+            System.out.println(
+                    "Password change failed: "
+                            + e.getMessage()
+            );
+
+            return false;
+        }
+    }
 }

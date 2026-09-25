@@ -61,8 +61,6 @@ public class GroupDAO {
                                     null
                             );
 
-                    // Automatically add creator
-                    // as a member of the group
                     addMember(
                             groupId,
                             createdBy
@@ -114,7 +112,6 @@ public class GroupDAO {
 
         } catch (SQLException e) {
 
-            // User is already a member
             if (e.getErrorCode() == 1062) {
 
                 return false;
@@ -192,7 +189,6 @@ public class GroupDAO {
 
         } catch (SQLException e) {
 
-            // Duplicate member
             if (e.getErrorCode() == 1062) {
 
                 System.out.println(
@@ -313,6 +309,387 @@ public class GroupDAO {
 
             System.out.println(
                     "ERROR REMOVING GROUP MEMBER"
+            );
+
+            System.out.println(
+                    "================================="
+            );
+
+            System.out.println(
+                    "SQL Error Code: "
+                            + e.getErrorCode()
+            );
+
+            System.out.println(
+                    "SQL State: "
+                            + e.getSQLState()
+            );
+
+            System.out.println(
+                    "Message: "
+                            + e.getMessage()
+            );
+
+            e.printStackTrace();
+
+            return false;
+        }
+    }
+
+
+    // =========================================================
+    // DELETE GROUP
+    // =========================================================
+
+    public boolean deleteGroup(
+            int groupId,
+            int userId
+    ) {
+
+        System.out.println(
+                "================================="
+        );
+
+        System.out.println(
+                "Trying to delete group..."
+        );
+
+        System.out.println(
+                "Group ID: " + groupId
+        );
+
+        System.out.println(
+                "User ID: " + userId
+        );
+
+        System.out.println(
+                "================================="
+        );
+
+        String checkSql = """
+                SELECT created_by
+                FROM chat_groups
+                WHERE id = ?
+                """;
+
+        String deleteMessagesSql = """
+                DELETE FROM group_messages
+                WHERE group_id = ?
+                """;
+
+        String deleteMembersSql = """
+                DELETE FROM group_members
+                WHERE group_id = ?
+                """;
+
+        String deleteGroupSql = """
+                DELETE FROM chat_groups
+                WHERE id = ?
+                """;
+
+        try (Connection connection =
+                     DatabaseConnection.getConnection()) {
+
+            // -------------------------------------------------
+            // CHECK GROUP ADMIN
+            // -------------------------------------------------
+
+            try (PreparedStatement statement =
+                         connection.prepareStatement(
+                                 checkSql
+                         )) {
+
+                statement.setInt(1, groupId);
+
+                try (ResultSet resultSet =
+                             statement.executeQuery()) {
+
+                    if (!resultSet.next()) {
+
+                        System.out.println(
+                                "Group not found."
+                        );
+
+                        return false;
+                    }
+
+                    int createdBy =
+                            resultSet.getInt(
+                                    "created_by"
+                            );
+
+                    if (createdBy != userId) {
+
+                        System.out.println(
+                                "Permission denied. "
+                                        + "Only the group admin "
+                                        + "can delete the group."
+                        );
+
+                        return false;
+                    }
+                }
+            }
+
+
+            // -------------------------------------------------
+            // START TRANSACTION
+            // -------------------------------------------------
+
+            connection.setAutoCommit(false);
+
+            try {
+
+                // -------------------------------------------------
+                // DELETE GROUP MESSAGES
+                // -------------------------------------------------
+
+                try (PreparedStatement statement =
+                             connection.prepareStatement(
+                                     deleteMessagesSql
+                             )) {
+
+                    statement.setInt(
+                            1,
+                            groupId
+                    );
+
+                    int rowsDeleted =
+                            statement.executeUpdate();
+
+                    System.out.println(
+                            "Group messages deleted: "
+                                    + rowsDeleted
+                    );
+                }
+
+
+                // -------------------------------------------------
+                // DELETE GROUP MEMBERS
+                // -------------------------------------------------
+
+                try (PreparedStatement statement =
+                             connection.prepareStatement(
+                                     deleteMembersSql
+                             )) {
+
+                    statement.setInt(
+                            1,
+                            groupId
+                    );
+
+                    int rowsDeleted =
+                            statement.executeUpdate();
+
+                    System.out.println(
+                            "Group members deleted: "
+                                    + rowsDeleted
+                    );
+                }
+
+
+                // -------------------------------------------------
+                // DELETE GROUP
+                // -------------------------------------------------
+
+                try (PreparedStatement statement =
+                             connection.prepareStatement(
+                                     deleteGroupSql
+                             )) {
+
+                    statement.setInt(
+                            1,
+                            groupId
+                    );
+
+                    int rowsDeleted =
+                            statement.executeUpdate();
+
+                    if (rowsDeleted > 0) {
+
+                        connection.commit();
+
+                        System.out.println(
+                                "Group deleted successfully!"
+                        );
+
+                        return true;
+                    }
+
+                    connection.rollback();
+
+                    System.out.println(
+                            "Group could not be deleted."
+                    );
+
+                    return false;
+                }
+
+            } catch (SQLException e) {
+
+                connection.rollback();
+
+                System.out.println(
+                        "Transaction rolled back."
+                );
+
+                throw e;
+
+            } finally {
+
+                connection.setAutoCommit(true);
+            }
+
+        } catch (SQLException e) {
+
+            System.out.println(
+                    "================================="
+            );
+
+            System.out.println(
+                    "ERROR DELETING GROUP"
+            );
+
+            System.out.println(
+                    "================================="
+            );
+
+            System.out.println(
+                    "SQL Error Code: "
+                            + e.getErrorCode()
+            );
+
+            System.out.println(
+                    "SQL State: "
+                            + e.getSQLState()
+            );
+
+            System.out.println(
+                    "Message: "
+                            + e.getMessage()
+            );
+
+            e.printStackTrace();
+
+            return false;
+        }
+    }
+
+
+    // =========================================================
+    // RENAME GROUP
+    // =========================================================
+
+    public boolean renameGroup(
+            int groupId,
+            int userId,
+            String newGroupName
+    ) {
+
+        System.out.println(
+                "================================="
+        );
+
+        System.out.println(
+                "Trying to rename group..."
+        );
+
+        System.out.println(
+                "Group ID: " + groupId
+        );
+
+        System.out.println(
+                "User ID: " + userId
+        );
+
+        System.out.println(
+                "New Group Name: "
+                        + newGroupName
+        );
+
+        System.out.println(
+                "================================="
+        );
+
+
+        // -------------------------------------------------
+        // VALIDATE GROUP NAME
+        // -------------------------------------------------
+
+        if (newGroupName == null
+                || newGroupName.trim().isEmpty()) {
+
+            System.out.println(
+                    "Group name cannot be empty."
+            );
+
+            return false;
+        }
+
+
+        String sql = """
+                UPDATE chat_groups
+                SET group_name = ?
+                WHERE id = ?
+                AND created_by = ?
+                """;
+
+
+        try (Connection connection =
+                     DatabaseConnection.getConnection();
+             PreparedStatement statement =
+                     connection.prepareStatement(sql)) {
+
+            statement.setString(
+                    1,
+                    newGroupName.trim()
+            );
+
+            statement.setInt(
+                    2,
+                    groupId
+            );
+
+            statement.setInt(
+                    3,
+                    userId
+            );
+
+
+            int rowsUpdated =
+                    statement.executeUpdate();
+
+
+            if (rowsUpdated > 0) {
+
+                System.out.println(
+                        "Group renamed successfully!"
+                );
+
+                return true;
+            }
+
+
+            System.out.println(
+                    "Group could not be renamed."
+            );
+
+            System.out.println(
+                    "Either the group does not exist "
+                            + "or the user is not the admin."
+            );
+
+            return false;
+
+
+        } catch (SQLException e) {
+
+            System.out.println(
+                    "================================="
+            );
+
+            System.out.println(
+                    "ERROR RENAMING GROUP"
             );
 
             System.out.println(

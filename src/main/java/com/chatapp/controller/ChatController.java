@@ -5,6 +5,7 @@ import com.chatapp.dao.GroupDAO;
 import com.chatapp.dao.GroupMessageDAO;
 import com.chatapp.dao.MessageDAO;
 import com.chatapp.dao.UserDAO;
+import com.chatapp.database.DatabaseConnection;
 import com.chatapp.model.Group;
 import com.chatapp.model.GroupMessage;
 import com.chatapp.model.Message;
@@ -37,6 +38,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
 
+import java.sql.Connection;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -510,6 +512,61 @@ public class ChatController {
 
 
     // =========================================================
+    // SET CURRENT USER
+    // =========================================================
+
+    public void setCurrentUser(User user) {
+
+        if (user == null) {
+
+            System.out.println(
+                    "Current user cannot be null."
+            );
+
+            return;
+        }
+
+        this.currentUser = user;
+        this.username = user.getUsername();
+
+        if (welcomeLabel != null) {
+
+            welcomeLabel.setText(
+                    "Welcome, " + user.getUsername() + "!"
+            );
+        }
+
+        System.out.println(
+                "================================="
+        );
+
+        System.out.println(
+                "CURRENT USER SET"
+        );
+
+        System.out.println(
+                "User ID: " + user.getId()
+        );
+
+        System.out.println(
+                "Username: " + user.getUsername()
+        );
+
+        System.out.println(
+                "Email: " + user.getEmail()
+        );
+
+        System.out.println(
+                "================================="
+        );
+
+        loadUsers();
+        loadGroups();
+        connectToSocketServer();
+    }
+
+
+    // =========================================================
     // SET USERNAME
     // =========================================================
 
@@ -703,6 +760,28 @@ public class ChatController {
 
                 System.out.println(
                         "New member added to group. "
+                                + "Refreshing groups..."
+                );
+
+                loadGroups();
+            });
+
+            return;
+        }
+
+
+        // =====================================================
+        // GROUP MEMBER REMOVED
+        // =====================================================
+
+        if (serverMessage.startsWith(
+                "GROUP_MEMBER_REMOVED|"
+        )) {
+
+            Platform.runLater(() -> {
+
+                System.out.println(
+                        "Group member removed. "
                                 + "Refreshing groups..."
                 );
 
@@ -998,7 +1077,7 @@ public class ChatController {
 
                                 time =
                                         message.getSentAt()
-                                                .format(
+.format(
                                                         TIME_FORMAT
                                                 );
                             }
@@ -1413,218 +1492,54 @@ public class ChatController {
 
         if (selectedGroup == null) {
 
+            Alert alert =
+                    new Alert(
+                            Alert.AlertType.WARNING
+                    );
+
+            alert.setTitle("No Group Selected");
+            alert.setHeaderText(null);
+            alert.setContentText("Please select a group first.");
+            alert.showAndWait();
+
             return;
         }
 
-        List<User> members =
-                groupDAO.getGroupMembers(
-                        selectedGroup.getId()
-                );
+        try {
 
-        Dialog<ButtonType> dialog =
-                new Dialog<>();
+            Connection connection =
+                    DatabaseConnection.getConnection();
 
-        dialog.setTitle(
-                "Group Members"
-        );
-
-        dialog.setHeaderText(
-                "Members of "
-                        + selectedGroup.getGroupName()
-        );
-
-        ButtonType addMemberButton =
-                new ButtonType(
-                        "ADD MEMBER",
-                        ButtonBar.ButtonData.LEFT
-                );
-
-        ButtonType closeButton =
-                new ButtonType(
-                        "CLOSE",
-                        ButtonBar.ButtonData.CANCEL_CLOSE
-                );
-
-        dialog.getDialogPane()
-                .getButtonTypes()
-                .addAll(
-                        addMemberButton,
-                        closeButton
-                );
-
-        VBox membersBox =
-                new VBox(10);
-
-        membersBox.setPadding(
-                new Insets(15)
-        );
-
-        for (User member : members) {
-
-            HBox memberRow =
-                    new HBox(10);
-
-            memberRow.setAlignment(
-                    Pos.CENTER_LEFT
-            );
-
-            Circle profileCircle =
-                    new Circle(18);
-
-            profileCircle.setStyle(
-                    "-fx-fill: #4f8fe8;"
-            );
-
-            String firstLetter =
-                    member.getUsername()
-                            .isEmpty()
-                            ? "?"
-                            : member.getUsername()
-                                    .substring(0, 1)
-                                    .toUpperCase();
-
-            Label initial =
-                    new Label(
-                            firstLetter
+            GroupMembersController controller =
+                    new GroupMembersController(
+                            selectedGroup.getId(),
+                            selectedGroup.getGroupName(),
+                            selectedGroup.getCreatedBy(),
+                            currentUser.getId(),
+                            connection,
+                            socketClient
                     );
 
-            initial.setStyle(
-                    "-fx-text-fill: white;"
-                            + "-fx-font-weight: bold;"
-            );
+            controller.show();
 
-            StackPane avatar =
-                    new StackPane(
-                            profileCircle,
-                            initial
+        } catch (Exception e) {
+
+            e.printStackTrace();
+
+            Alert alert =
+                    new Alert(
+                            Alert.AlertType.ERROR
                     );
 
-            Label usernameLabel =
-                    new Label(
-                            member.getUsername()
-                    );
-
-            usernameLabel.setStyle(
-                    "-fx-font-size: 14px;"
-                            + "-fx-font-weight: bold;"
-                            + "-fx-text-fill: #172033;"
+            alert.setTitle("Group Members");
+            alert.setHeaderText("Could not open group members");
+            alert.setContentText(
+                    e.getMessage() != null
+                            ? e.getMessage()
+                            : "Unknown error."
             );
-
-            if (currentUser != null
-                    && member.getId()
-                    == currentUser.getId()) {
-
-                Label youLabel =
-                        new Label("(You)");
-
-                youLabel.setStyle(
-                        "-fx-text-fill: #64748b;"
-                                + "-fx-font-size: 12px;"
-                );
-
-                memberRow.getChildren()
-                        .addAll(
-                                avatar,
-                                usernameLabel,
-                                youLabel
-                        );
-
-            } else {
-
-                memberRow.getChildren()
-                        .addAll(
-                                avatar,
-                                usernameLabel
-                        );
-            }
-
-            membersBox.getChildren()
-                    .add(memberRow);
+            alert.showAndWait();
         }
-
-        if (members.isEmpty()) {
-
-            Label emptyLabel =
-                    new Label(
-                            "No members found."
-                    );
-
-            emptyLabel.setStyle(
-                    "-fx-text-fill: #64748b;"
-            );
-
-            membersBox.getChildren()
-                    .add(emptyLabel);
-        }
-
-        ScrollPane scrollPane =
-                new ScrollPane(
-                        membersBox
-                );
-
-        scrollPane.setFitToWidth(
-                true
-        );
-
-        scrollPane.setPrefHeight(
-                300
-        );
-
-        scrollPane.setPrefWidth(
-                300
-        );
-
-        dialog.getDialogPane()
-                .setContent(
-                        scrollPane
-                );
-
-
-        // =====================================================
-        // ADD MEMBER BUTTON
-        // =====================================================
-
-        Button addButton =
-                (Button)
-                        dialog.getDialogPane()
-                                .lookupButton(
-                                        addMemberButton
-                                );
-
-        addButton.setOnAction(event -> {
-
-            dialog.close();
-
-            showAddMemberDialog();
-
-        });
-
-
-        // =====================================================
-        // ONLY GROUP CREATOR CAN ADD MEMBERS
-        // =====================================================
-
-        boolean isGroupCreator =
-                currentUser != null
-                        && selectedGroup != null
-                        && currentUser.getId()
-                                == selectedGroup.getCreatedBy();
-
-        addButton.setDisable(
-                !isGroupCreator
-        );
-
-        if (!isGroupCreator) {
-
-            addButton.setTooltip(
-                    new javafx.scene.control.Tooltip(
-                            "Only the group creator can add members."
-                    )
-            );
-        }
-
-
-        dialog.showAndWait();
     }
 
 
@@ -1998,7 +1913,7 @@ public class ChatController {
 
             alert.showAndWait();
         }
-    }
+}
 
 
     // =========================================================
@@ -2402,6 +2317,73 @@ public class ChatController {
             );
 
             alert.showAndWait();
+        }
+    }
+
+
+    // =========================================================
+    // OPEN PROFILE
+    // =========================================================
+
+    @FXML
+    private void handleProfile() {
+
+        try {
+
+            FXMLLoader loader =
+                    new FXMLLoader(
+                            getClass().getResource(
+                                    "/fxml/profile.fxml"
+                            )
+                    );
+
+            Parent root =
+                    loader.load();
+
+            ProfileController profileController =
+                    loader.getController();
+
+            profileController.setUser(
+                    currentUser
+            );
+
+            Scene scene =
+                    new Scene(root);
+
+            if (getClass()
+                    .getResource(
+                            "/css/profile.css"
+                    ) != null) {
+
+                scene.getStylesheets().add(
+                        getClass()
+                                .getResource(
+                                        "/css/profile.css"
+                                )
+                                .toExternalForm()
+                );
+            }
+
+            Stage stage =
+                    (Stage) welcomeLabel
+                            .getScene()
+                            .getWindow();
+
+            stage.setTitle(
+                    "Chat Application - My Profile"
+            );
+
+            stage.setScene(scene);
+
+            stage.show();
+
+        } catch (Exception e) {
+
+            System.out.println(
+                    "Unable to open profile page."
+            );
+
+            e.printStackTrace();
         }
     }
 

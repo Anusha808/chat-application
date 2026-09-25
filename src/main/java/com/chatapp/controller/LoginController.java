@@ -25,13 +25,24 @@ public class LoginController {
 
     private final UserDAO userDAO = new UserDAO();
 
+
+    // ==========================================
+    // HANDLE LOGIN
+    // ==========================================
+
     @FXML
     private void handleLogin() {
 
-        String username = usernameField.getText().trim();
-        String password = passwordField.getText();
+        String username =
+                usernameField.getText().trim();
 
-        if (username.isEmpty() || password.isEmpty()) {
+        String password =
+                passwordField.getText();
+
+
+        // Check empty fields
+        if (username.isEmpty()
+                || password.isEmpty()) {
 
             messageLabel.setText(
                     "Please enter username and password."
@@ -40,9 +51,21 @@ public class LoginController {
             return;
         }
 
-        User user = userDAO.loginUser(username, password);
+
+        // Check login details
+        User user =
+                userDAO.loginUser(
+                        username,
+                        password
+                );
+
 
         if (user != null) {
+
+            System.out.println(
+                    "Login successful: "
+                            + user.getUsername()
+            );
 
             openChatDashboard(user);
 
@@ -54,45 +77,86 @@ public class LoginController {
         }
     }
 
+
+    // ==========================================
+    // OPEN CHAT DASHBOARD
+    // ==========================================
+
     private void openChatDashboard(User user) {
 
         try {
 
-            FXMLLoader loader = new FXMLLoader(
-                    getClass().getResource("/fxml/chat.fxml")
-            );
+            FXMLLoader loader =
+                    new FXMLLoader(
+                            getClass().getResource(
+                                    "/fxml/chat.fxml"
+                            )
+                    );
 
-            Parent root = loader.load();
 
+            Parent root =
+                    loader.load();
+
+
+            // Get ChatController
             ChatController chatController =
                     loader.getController();
 
-            chatController.setUsername(
-                    user.getUsername()
-            );
 
-            Scene scene = new Scene(root);
+            // ==================================
+            // PASS LOGGED-IN USER
+            // ==================================
 
+            chatController.setCurrentUser(user);
+
+
+            // ==================================
+            // CREATE SCENE
+            // ==================================
+
+            Scene scene =
+                    new Scene(root);
+
+
+            // Load chat CSS
             scene.getStylesheets().add(
                     getClass()
-                            .getResource("/css/chat.css")
+                            .getResource(
+                                    "/css/chat.css"
+                            )
                             .toExternalForm()
             );
 
+
+            // ==================================
+            // GET CURRENT WINDOW
+            // ==================================
+
             Stage stage =
-                    (Stage) usernameField.getScene().getWindow();
+                    (Stage) usernameField
+                            .getScene()
+                            .getWindow();
+
+
+            // ==================================
+            // WINDOW SETTINGS
+            // ==================================
 
             stage.setTitle(
-                    "Chat Application - " + user.getUsername()
+                    "Chat Application - "
+                            + user.getUsername()
             );
 
             stage.setScene(scene);
 
             stage.setWidth(900);
+
             stage.setHeight(600);
+
             stage.setResizable(true);
 
             stage.show();
+
 
         } catch (Exception e) {
 
@@ -102,39 +166,66 @@ public class LoginController {
 
             e.printStackTrace();
 
+
             messageLabel.setText(
                     "Unable to open chat dashboard."
             );
         }
     }
 
+
+    // ==========================================
+    // OPEN REGISTER PAGE
+    // ==========================================
+
     @FXML
     private void openRegisterPage() {
 
         try {
 
-            FXMLLoader loader = new FXMLLoader(
-                    getClass().getResource("/fxml/register.fxml")
-            );
+            FXMLLoader loader =
+                    new FXMLLoader(
+                            getClass().getResource(
+                                    "/fxml/register.fxml"
+                            )
+                    );
 
-            Parent root = loader.load();
 
+            Parent root =
+                    loader.load();
+
+
+            // Get current window
             Stage stage =
-                    (Stage) usernameField.getScene().getWindow();
+                    (Stage) usernameField
+                            .getScene()
+                            .getWindow();
 
-            Scene scene = new Scene(root);
 
+            // Create register scene
+            Scene scene =
+                    new Scene(root);
+
+
+            // Load register CSS
             scene.getStylesheets().add(
                     getClass()
-                            .getResource("/css/register.css")
+                            .getResource(
+                                    "/css/register.css"
+                            )
                             .toExternalForm()
             );
+
 
             stage.setTitle(
                     "Chat Application - Register"
             );
 
+
             stage.setScene(scene);
+
+            stage.show();
+
 
         } catch (Exception e) {
 

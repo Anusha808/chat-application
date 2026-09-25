@@ -253,6 +253,135 @@ public class ChatSocketClient {
 
 
     // =========================================================
+    // NOTIFY SERVER THAT A MEMBER WAS REMOVED
+    // =========================================================
+
+    public void notifyGroupMemberRemoved(
+            int groupId,
+            int userId
+    ) {
+
+        if (output == null) {
+
+            System.out.println(
+                    "Socket is not connected."
+            );
+
+            return;
+        }
+
+        String data =
+                "GROUP_MEMBER_REMOVED|"
+                        + groupId
+                        + "|"
+                        + userId;
+
+        output.println(data);
+
+        System.out.println(
+                "Group member removal notification sent: "
+                        + data
+        );
+    }
+
+
+    // =========================================================
+    // NOTIFY SERVER THAT A MEMBER LEFT THE GROUP
+    // =========================================================
+
+    public void notifyGroupMemberLeft(
+            int groupId,
+            int userId
+    ) {
+
+        if (output == null) {
+
+            System.out.println(
+                    "Socket is not connected."
+            );
+
+            return;
+        }
+
+        String data =
+                "GROUP_MEMBER_LEFT|"
+                        + groupId
+                        + "|"
+                        + userId;
+
+        output.println(data);
+
+        System.out.println(
+                "Group member left notification sent: "
+                        + data
+        );
+    }
+
+
+    // =========================================================
+    // NOTIFY SERVER THAT A GROUP WAS DELETED
+    // =========================================================
+
+    public void notifyGroupDeleted(
+            int groupId
+    ) {
+
+        if (output == null) {
+
+            System.out.println(
+                    "Socket is not connected."
+            );
+
+            return;
+        }
+
+        String data =
+                "GROUP_DELETED|"
+                        + groupId;
+
+        output.println(data);
+
+        System.out.println(
+                "Group deleted notification sent: "
+                        + data
+        );
+    }
+
+
+    // =========================================================
+    // NOTIFY SERVER THAT A GROUP WAS RENAMED
+    // =========================================================
+
+    public void notifyGroupRenamed(
+            int groupId,
+            String newGroupName
+    ) {
+
+        if (output == null) {
+
+            System.out.println(
+                    "Socket is not connected."
+            );
+
+            return;
+        }
+
+        String data =
+                "GROUP_RENAMED|"
+                        + groupId
+                        + "|"
+                        + newGroupName;
+
+        output.println(data);
+
+        System.out.println(
+                "Group renamed notification sent: "
+                        + data
+        );
+    }
+
+
+    // =========================================================
     // SET MESSAGE LISTENER
     // =========================================================
 

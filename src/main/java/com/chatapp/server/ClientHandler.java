@@ -136,6 +136,62 @@ public class ClientHandler implements Runnable {
 
 
                 // =================================================
+                // GROUP MEMBER REMOVED
+                // =================================================
+
+                if (message.startsWith(
+                        "GROUP_MEMBER_REMOVED|"
+                )) {
+
+                    handleGroupMemberRemoved(message);
+
+                    continue;
+                }
+
+
+                // =================================================
+                // GROUP MEMBER LEFT
+                // =================================================
+
+                if (message.startsWith(
+                        "GROUP_MEMBER_LEFT|"
+                )) {
+
+                    handleGroupMemberLeft(message);
+
+                    continue;
+                }
+
+
+                // =================================================
+                // GROUP DELETED
+                // =================================================
+
+                if (message.startsWith(
+                        "GROUP_DELETED|"
+                )) {
+
+                    handleGroupDeleted(message);
+
+                    continue;
+                }
+
+
+                // =================================================
+                // GROUP RENAMED
+                // =================================================
+
+                if (message.startsWith(
+                        "GROUP_RENAMED|"
+                )) {
+
+                    handleGroupRenamed(message);
+
+                    continue;
+                }
+
+
+                // =================================================
                 // GROUP MESSAGE
                 // =================================================
 
@@ -298,11 +354,6 @@ public class ClientHandler implements Runnable {
 
 
             // Notify every connected client.
-            //
-            // Each client will call loadGroups().
-            //
-            // loadGroups() only displays groups
-            // where that user exists in group_members.
 
             for (ClientHandler client :
                     ChatServer
@@ -406,25 +457,14 @@ public class ClientHandler implements Runnable {
             );
 
 
-            /*
-             * Send the notification to every connected
-             * client.
-             *
-             * The receiving ChatController will refresh
-             * its group list.
-             *
-             * Because getGroupsForUser() checks the
-             * group_members table, only the newly added
-             * member and existing members will actually
-             * see the group.
-             */
-
             String notification =
                     "GROUP_MEMBER_ADDED|"
                             + groupId
                             + "|"
                             + userId;
 
+
+            // Notify every connected client.
 
             for (ClientHandler client :
                     ChatServer
@@ -464,6 +504,475 @@ public class ClientHandler implements Runnable {
 
             output.println(
                     "ERROR|Could not notify group member addition"
+            );
+        }
+    }
+
+
+    // =========================================================
+    // HANDLE GROUP MEMBER REMOVED
+    // =========================================================
+
+    private void handleGroupMemberRemoved(
+            String message
+    ) {
+
+        try {
+
+            String[] parts =
+                    message.split(
+                            "\\|",
+                            3
+                    );
+
+
+            if (parts.length < 3) {
+
+                output.println(
+                        "ERROR|Invalid group member removal message"
+                );
+
+                return;
+            }
+
+
+            int groupId =
+                    Integer.parseInt(
+                            parts[1]
+                    );
+
+
+            int userId =
+                    Integer.parseInt(
+                            parts[2]
+                    );
+
+
+            System.out.println(
+                    "================================="
+            );
+
+            System.out.println(
+                    "GROUP MEMBER REMOVED"
+            );
+
+            System.out.println(
+                    "Group ID: "
+                            + groupId
+            );
+
+            System.out.println(
+                    "User ID: "
+                            + userId
+            );
+
+            System.out.println(
+                    "================================="
+            );
+
+
+            String notification =
+                    "GROUP_MEMBER_REMOVED|"
+                            + groupId
+                            + "|"
+                            + userId;
+
+
+            // Notify all connected clients.
+
+            for (ClientHandler client :
+                    ChatServer
+                            .getConnectedUsers()
+                            .values()) {
+
+                client.sendMessage(
+                        notification
+                );
+            }
+
+
+            output.println(
+                    "GROUP_MEMBER_REMOVED_SUCCESS"
+            );
+
+
+            System.out.println(
+                    "Group member removal notification broadcast."
+            );
+
+
+        } catch (NumberFormatException e) {
+
+            output.println(
+                    "ERROR|Invalid group or user ID"
+            );
+
+
+        } catch (Exception e) {
+
+            System.out.println(
+                    "Error handling group member removal: "
+                            + e.getMessage()
+            );
+
+
+            output.println(
+                    "ERROR|Could not notify group member removal"
+            );
+        }
+    }
+
+
+    // =========================================================
+    // HANDLE GROUP MEMBER LEFT
+    // =========================================================
+
+    private void handleGroupMemberLeft(
+            String message
+    ) {
+
+        try {
+
+            String[] parts =
+                    message.split(
+                            "\\|",
+                            3
+                    );
+
+
+            if (parts.length < 3) {
+
+                output.println(
+                        "ERROR|Invalid group member left message"
+                );
+
+                return;
+            }
+
+
+            int groupId =
+                    Integer.parseInt(
+                            parts[1]
+                    );
+
+
+            int userId =
+                    Integer.parseInt(
+                            parts[2]
+                    );
+
+
+            System.out.println(
+                    "================================="
+            );
+
+            System.out.println(
+                    "GROUP MEMBER LEFT"
+            );
+
+            System.out.println(
+                    "Group ID: "
+                            + groupId
+            );
+
+            System.out.println(
+                    "User ID: "
+                            + userId
+            );
+
+            System.out.println(
+                    "================================="
+            );
+
+
+            String notification =
+                    "GROUP_MEMBER_LEFT|"
+                            + groupId
+                            + "|"
+                            + userId;
+
+
+            // -------------------------------------------------
+            // NOTIFY ALL CONNECTED CLIENTS
+            // -------------------------------------------------
+
+            for (ClientHandler client :
+                    ChatServer
+                            .getConnectedUsers()
+                            .values()) {
+
+                client.sendMessage(
+                        notification
+                );
+            }
+
+
+            // -------------------------------------------------
+            // SEND SUCCESS RESPONSE
+            // -------------------------------------------------
+
+            output.println(
+                    "GROUP_MEMBER_LEFT_SUCCESS"
+            );
+
+
+            System.out.println(
+                    "Group member left notification broadcast."
+            );
+
+
+        } catch (NumberFormatException e) {
+
+            output.println(
+                    "ERROR|Invalid group or user ID"
+            );
+
+
+        } catch (Exception e) {
+
+            System.out.println(
+                    "Error handling group member left: "
+                            + e.getMessage()
+            );
+
+
+            output.println(
+                    "ERROR|Could not notify group member left"
+            );
+        }
+    }
+
+
+    // =========================================================
+    // HANDLE GROUP DELETED
+    // =========================================================
+
+    private void handleGroupDeleted(
+            String message
+    ) {
+
+        try {
+
+            String[] parts =
+                    message.split(
+                            "\\|",
+                            2
+                    );
+
+
+            if (parts.length < 2) {
+
+                output.println(
+                        "ERROR|Invalid group deleted message"
+                );
+
+                return;
+            }
+
+
+            int groupId =
+                    Integer.parseInt(
+                            parts[1]
+                    );
+
+
+            System.out.println(
+                    "================================="
+            );
+
+            System.out.println(
+                    "GROUP DELETED"
+            );
+
+            System.out.println(
+                    "Group ID: "
+                            + groupId
+            );
+
+            System.out.println(
+                    "================================="
+            );
+
+
+            String notification =
+                    "GROUP_DELETED|"
+                            + groupId;
+
+
+            // -------------------------------------------------
+            // NOTIFY ALL CONNECTED CLIENTS
+            // -------------------------------------------------
+
+            for (ClientHandler client :
+                    ChatServer
+                            .getConnectedUsers()
+                            .values()) {
+
+                client.sendMessage(
+                        notification
+                );
+            }
+
+
+            // -------------------------------------------------
+            // SEND SUCCESS RESPONSE
+            // -------------------------------------------------
+
+            output.println(
+                    "GROUP_DELETED_SUCCESS"
+            );
+
+
+            System.out.println(
+                    "Group deletion notification broadcast."
+            );
+
+
+        } catch (NumberFormatException e) {
+
+            output.println(
+                    "ERROR|Invalid group ID"
+            );
+
+
+        } catch (Exception e) {
+
+            System.out.println(
+                    "Error handling group deletion: "
+                            + e.getMessage()
+            );
+
+
+            output.println(
+                    "ERROR|Could not notify group deletion"
+            );
+        }
+    }
+
+
+    // =========================================================
+    // HANDLE GROUP RENAMED
+    // =========================================================
+
+    private void handleGroupRenamed(
+            String message
+    ) {
+
+        try {
+
+            String[] parts =
+                    message.split(
+                            "\\|",
+                            3
+                    );
+
+
+            if (parts.length < 3) {
+
+                output.println(
+                        "ERROR|Invalid group renamed message"
+                );
+
+                return;
+            }
+
+
+            int groupId =
+                    Integer.parseInt(
+                            parts[1]
+                    );
+
+
+            String newGroupName =
+                    parts[2].trim();
+
+
+            if (newGroupName.isEmpty()) {
+
+                output.println(
+                        "ERROR|Group name cannot be empty"
+                );
+
+                return;
+            }
+
+
+            System.out.println(
+                    "================================="
+            );
+
+            System.out.println(
+                    "GROUP RENAMED"
+            );
+
+            System.out.println(
+                    "Group ID: "
+                            + groupId
+            );
+
+            System.out.println(
+                    "New Group Name: "
+                            + newGroupName
+            );
+
+            System.out.println(
+                    "================================="
+            );
+
+
+            String notification =
+                    "GROUP_RENAMED|"
+                            + groupId
+                            + "|"
+                            + newGroupName;
+
+
+            // -------------------------------------------------
+            // NOTIFY ALL CONNECTED CLIENTS
+            // -------------------------------------------------
+
+            for (ClientHandler client :
+                    ChatServer
+                            .getConnectedUsers()
+                            .values()) {
+
+                client.sendMessage(
+                        notification
+                );
+            }
+
+
+            // -------------------------------------------------
+            // SEND SUCCESS RESPONSE
+            // -------------------------------------------------
+
+            output.println(
+                    "GROUP_RENAMED_SUCCESS"
+            );
+
+
+            System.out.println(
+                    "Group rename notification broadcast."
+            );
+
+
+        } catch (NumberFormatException e) {
+
+            output.println(
+                    "ERROR|Invalid group ID"
+            );
+
+
+        } catch (Exception e) {
+
+            System.out.println(
+                    "Error handling group rename: "
+                            + e.getMessage()
+            );
+
+
+            output.println(
+                    "ERROR|Could not notify group rename"
             );
         }
     }
