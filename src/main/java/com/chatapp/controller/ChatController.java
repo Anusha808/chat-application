@@ -86,6 +86,12 @@ public class ChatController {
     private ListView<String> groupListView;
 
     @FXML
+    private TextField groupSearchField;
+
+    @FXML
+    private Button clearGroupSearchButton;
+
+    @FXML
     private ListView<String> messageListView;
 
     @FXML
@@ -240,6 +246,24 @@ public class ChatController {
                              newValue) -> {
 
                                 filterMessages();
+                            }
+                    );
+        }
+
+
+        // =====================================================
+        // GROUP SEARCH
+        // =====================================================
+
+        if (groupSearchField != null) {
+
+            groupSearchField.textProperty()
+                    .addListener(
+                            (observable,
+                             oldValue,
+                             newValue) -> {
+
+                                loadGroups();
                             }
                     );
         }
@@ -2133,6 +2157,23 @@ public class ChatController {
     // LOAD GROUPS
     // =========================================================
 
+    @FXML
+    private void handleClearGroupSearch() {
+
+        if (groupSearchField != null) {
+
+            groupSearchField.clear();
+        }
+
+
+        groupListView
+                .getSelectionModel()
+                .clearSelection();
+
+        loadGroups();
+    }
+
+
     private void loadGroups() {
 
         if (currentUser == null) {
@@ -2147,11 +2188,43 @@ public class ChatController {
                 );
 
 
+        String searchText = "";
+
+        if (groupSearchField != null
+                && groupSearchField.getText() != null) {
+
+            searchText =
+                    groupSearchField.getText()
+                            .trim()
+                            .toLowerCase();
+        }
+
+
+        final String finalSearchText =
+                searchText;
+
+
         List<String> groupNames =
                 groups.stream()
-                        .map(
-                                Group::getGroupName
-                        )
+                        .map(Group::getGroupName)
+                        .filter(groupName -> {
+
+                            if (groupName == null) {
+
+                                return false;
+                            }
+
+                            if (finalSearchText.isEmpty()) {
+
+                                return true;
+                            }
+
+                            return groupName
+                                    .toLowerCase()
+                                    .contains(
+                                            finalSearchText
+                                    );
+                        })
                         .toList();
 
 

@@ -12,13 +12,14 @@
 <BorderPane xmlns="http://javafx.com/javafx/21"
             xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="com.chatapp.controller.ChatController"
-            prefWidth="900"
-            prefHeight="600"
+            prefWidth="1100"
+            prefHeight="700"
             styleClass="chat-container">
 
-    <!-- ===================================================== -->
-    <!-- HEADER -->
-    <!-- ===================================================== -->
+
+    <!-- =====================================================
+         TOP HEADER
+         ===================================================== -->
 
     <top>
 
@@ -27,26 +28,35 @@
               styleClass="chat-header">
 
             <padding>
-
-                <Insets top="15"
-                        right="20"
-                        bottom="15"
-                        left="20"/>
-
+                <Insets top="14"
+                        right="22"
+                        bottom="14"
+                        left="22"/>
             </padding>
 
 
-            <!-- APPLICATION TITLE -->
+            <!-- LOGO -->
 
-            <Label text="💬 CHAT APPLICATION"
-                   styleClass="header-title"/>
+            <VBox spacing="2"
+                  styleClass="brand-area">
+
+                <Label text="💬"
+                       styleClass="brand-icon"/>
+
+            </VBox>
 
 
-            <!-- WELCOME USER -->
+            <!-- TITLE -->
 
-            <Label fx:id="welcomeLabel"
-                   text="Welcome!"
-                   styleClass="welcome-label"/>
+            <VBox spacing="2">
+
+                <Label text="Chat Application"
+                       styleClass="header-title"/>
+
+                <Label text="Stay connected. Stay together."
+                       styleClass="header-subtitle"/>
+
+            </VBox>
 
 
             <!-- SPACER -->
@@ -54,21 +64,28 @@
             <HBox HBox.hgrow="ALWAYS"/>
 
 
-            <!-- PROFILE BUTTON -->
+            <!-- WELCOME -->
+
+            <Label fx:id="welcomeLabel"
+                   text="Welcome!"
+                   styleClass="welcome-label"/>
+
+
+            <!-- PROFILE -->
 
             <Button text="PROFILE"
                     onAction="#handleProfile"
-                    styleClass="profile-button"/>
+                    styleClass="header-button"/>
 
 
-            <!-- SETTINGS BUTTON -->
+            <!-- SETTINGS -->
 
             <Button text="⚙ SETTINGS"
                     onAction="#handleSettings"
-                    styleClass="profile-button"/>
+                    styleClass="header-button"/>
 
 
-            <!-- LOGOUT BUTTON -->
+            <!-- LOGOUT -->
 
             <Button text="LOGOUT"
                     onAction="#handleLogout"
@@ -79,134 +96,182 @@
     </top>
 
 
-    <!-- ===================================================== -->
-    <!-- LEFT SIDEBAR -->
-    <!-- ===================================================== -->
+    <!-- =====================================================
+         LEFT SIDEBAR
+         ===================================================== -->
 
     <left>
 
-        <VBox prefWidth="220"
-              spacing="10"
+        <VBox prefWidth="270"
+              spacing="14"
               styleClass="sidebar">
 
             <padding>
-
-                <Insets top="20"
-                        right="15"
-                        bottom="20"
-                        left="15"/>
-
+                <Insets top="22"
+                        right="18"
+                        bottom="22"
+                        left="18"/>
             </padding>
 
 
-            <!-- ================================================= -->
-            <!-- USERS -->
-            <!-- ================================================= -->
+            <!-- =================================================
+                 PRIVATE MESSAGES / PEOPLE
+                 ================================================= -->
 
-            <Label text="USERS"
-                   styleClass="section-title"/>
-
-
-            <!-- ================================================= -->
-            <!-- SEARCH USERS -->
-            <!-- ================================================= -->
-
-            <HBox alignment="CENTER_LEFT"
-                  spacing="5"
-                  styleClass="search-box">
-
-                <TextField fx:id="searchField"
-                           promptText="🔍 Search users..."
-                           HBox.hgrow="ALWAYS"
-                           styleClass="search-field"/>
-
-                <Button fx:id="clearSearchButton"
-                        text="✕"
-                        onAction="#handleClearSearch"
-                        styleClass="clear-search-button"/>
-
-            </HBox>
+            <VBox spacing="10"
+                  VBox.vgrow="ALWAYS"
+                  styleClass="sidebar-section">
 
 
-            <!-- ================================================= -->
-            <!-- USER LIST -->
-            <!-- ================================================= -->
+                <!-- PEOPLE HEADER -->
 
-            <ListView fx:id="userListView"
-                      VBox.vgrow="ALWAYS"
-                      styleClass="user-list"/>
+                <HBox alignment="CENTER_LEFT"
+                      spacing="8">
 
+                    <Label text="PEOPLE"
+                           styleClass="section-title"/>
 
-            <!-- ================================================= -->
-            <!-- GROUP HEADER -->
-            <!-- ================================================= -->
+                    <Label text="●"
+                           styleClass="section-dot"/>
 
-            <HBox alignment="CENTER_LEFT"
-                  spacing="10">
-
-                <Label text="GROUPS"
-                       styleClass="section-title"
-                       HBox.hgrow="ALWAYS"/>
+                </HBox>
 
 
-                <!-- CREATE GROUP -->
+                <!-- PEOPLE SEARCH -->
 
-                <Button text="+"
-                        onAction="#handleCreateGroup"
-                        styleClass="create-group-button"
-                        prefWidth="35"
-                        prefHeight="30"/>
+                <HBox alignment="CENTER_LEFT"
+                      spacing="5"
+                      styleClass="search-box">
 
-            </HBox>
+                    <TextField fx:id="searchField"
+                               promptText="🔍  Search people..."
+                               HBox.hgrow="ALWAYS"
+                               styleClass="search-field"/>
+
+                    <Button fx:id="clearSearchButton"
+                            text="✕"
+                            onAction="#handleClearSearch"
+                            styleClass="clear-search-button"/>
+
+                </HBox>
 
 
-            <!-- ================================================= -->
-            <!-- GROUP LIST -->
-            <!-- ================================================= -->
+                <!-- PRIVATE MESSAGE LIST -->
 
-            <ListView fx:id="groupListView"
-                      prefHeight="150"
-                      styleClass="group-list"/>
+                <ListView fx:id="userListView"
+                          VBox.vgrow="ALWAYS"
+                          styleClass="user-list"/>
+
+            </VBox>
+
+
+            <!-- =================================================
+                 GROUP SECTION
+                 ================================================= -->
+
+            <VBox spacing="10"
+                  styleClass="group-section">
+
+
+                <!-- GROUP HEADER -->
+
+                <HBox alignment="CENTER_LEFT"
+                      spacing="10">
+
+                    <Label text="GROUPS"
+                           styleClass="section-title"
+                           HBox.hgrow="ALWAYS"/>
+
+
+                    <!-- CREATE GROUP -->
+
+                    <Button text="+"
+                            onAction="#handleCreateGroup"
+                            styleClass="create-group-button"
+                            prefWidth="34"
+                            prefHeight="34"/>
+
+                </HBox>
+
+
+                <!-- GROUP SEARCH -->
+
+                <HBox alignment="CENTER_LEFT"
+                      spacing="5"
+                      styleClass="group-search-box">
+
+                    <TextField fx:id="groupSearchField"
+                               promptText="🔍  Search groups..."
+                               HBox.hgrow="ALWAYS"
+                               styleClass="group-search-field"/>
+
+                    <Button fx:id="clearGroupSearchButton"
+                            text="✕"
+                            onAction="#handleClearGroupSearch"
+                            styleClass="clear-group-search-button"/>
+
+                </HBox>
+
+
+                <!-- GROUP LIST -->
+
+                <ListView fx:id="groupListView"
+                          prefHeight="160"
+                          minHeight="100"
+                          styleClass="group-list"/>
+
+            </VBox>
 
         </VBox>
 
     </left>
 
 
-    <!-- ===================================================== -->
-    <!-- CHAT AREA -->
-    <!-- ===================================================== -->
+    <!-- =====================================================
+         CENTER CHAT AREA
+         ===================================================== -->
 
     <center>
 
         <BorderPane styleClass="conversation-container">
 
 
-            <!-- ================================================= -->
-            <!-- CHAT HEADER -->
-            <!-- ================================================= -->
+            <!-- =================================================
+                 CHAT HEADER
+                 ================================================= -->
 
             <top>
 
                 <HBox alignment="CENTER_LEFT"
-                      spacing="10"
+                      spacing="12"
                       styleClass="conversation-header">
 
                     <padding>
-
-                        <Insets top="12"
-                                right="20"
-                                bottom="12"
-                                left="20"/>
-
+                        <Insets top="15"
+                                right="22"
+                                bottom="15"
+                                left="22"/>
                     </padding>
+
+
+                    <!-- CHAT AVATAR -->
+
+                    <Label text="💬"
+                           styleClass="conversation-icon"/>
 
 
                     <!-- CHAT TITLE -->
 
-                    <Label fx:id="chatTitleLabel"
-                           text="Select a user to start chatting"
-                           styleClass="chat-title"/>
+                    <VBox spacing="3">
+
+                        <Label fx:id="chatTitleLabel"
+                               text="Select a user to start chatting"
+                               styleClass="chat-title"/>
+
+                        <Label text="Your conversations"
+                               styleClass="chat-subtitle"/>
+
+                    </VBox>
 
 
                     <!-- SPACER -->
@@ -214,17 +279,17 @@
                     <HBox HBox.hgrow="ALWAYS"/>
 
 
-                    <!-- ================================================= -->
-                    <!-- SEARCH MESSAGES -->
-                    <!-- ================================================= -->
+                    <!-- =================================================
+                         MESSAGE SEARCH
+                         ================================================= -->
 
                     <HBox alignment="CENTER_LEFT"
                           spacing="5"
                           styleClass="message-search-box">
 
                         <TextField fx:id="messageSearchField"
-                                   promptText="🔎 Search messages..."
-                                   prefWidth="180"
+                                   promptText="🔎  Search messages..."
+                                   prefWidth="200"
                                    styleClass="message-search-field"/>
 
                         <Button fx:id="clearMessageSearchButton"
@@ -235,9 +300,7 @@
                     </HBox>
 
 
-                    <!-- ================================================= -->
-                    <!-- MEMBERS BUTTON -->
-                    <!-- ================================================= -->
+                    <!-- MEMBERS -->
 
                     <Button fx:id="membersButton"
                             text="MEMBERS"
@@ -251,21 +314,26 @@
             </top>
 
 
-            <!-- ================================================= -->
-            <!-- MESSAGES -->
-            <!-- ================================================= -->
+            <!-- =================================================
+                 MESSAGE AREA
+                 ================================================= -->
 
             <center>
 
-                <ListView fx:id="messageListView"
-                          styleClass="message-list"/>
+                <VBox styleClass="message-area">
+
+                    <ListView fx:id="messageListView"
+                              VBox.vgrow="ALWAYS"
+                              styleClass="message-list"/>
+
+                </VBox>
 
             </center>
 
 
-            <!-- ================================================= -->
-            <!-- MESSAGE INPUT -->
-            <!-- ================================================= -->
+            <!-- =================================================
+                 MESSAGE INPUT
+                 ================================================= -->
 
             <bottom>
 
@@ -274,54 +342,44 @@
                       styleClass="message-input-area">
 
                     <padding>
-
-                        <Insets top="15"
-                                right="15"
-                                bottom="15"
-                                left="15"/>
-
+                        <Insets top="16"
+                                right="20"
+                                bottom="16"
+                                left="20"/>
                     </padding>
 
 
-                    <!-- ================================================= -->
                     <!-- ATTACHMENT BUTTON -->
-                    <!-- ================================================= -->
 
                     <Button fx:id="attachmentButton"
                             text="📎"
                             onAction="#handleAttachment"
-                            styleClass="attachment-button"
-                            prefWidth="45"
-                            prefHeight="35"/>
+                            styleClass="icon-button"
+                            prefWidth="42"
+                            prefHeight="42"/>
 
 
-                    <!-- ================================================= -->
-                    <!-- COLOR EMOJI BUTTON -->
-                    <!-- ================================================= -->
+                    <!-- EMOJI BUTTON -->
 
                     <Button fx:id="emojiButton"
                             text="😊"
                             onAction="#handleEmoji"
-                            styleClass="emoji-button"
-                            prefWidth="45"
-                            prefHeight="35"/>
+                            styleClass="icon-button"
+                            prefWidth="42"
+                            prefHeight="42"/>
 
 
-                    <!-- ================================================= -->
                     <!-- MESSAGE FIELD -->
-                    <!-- ================================================= -->
 
                     <TextField fx:id="messageField"
-                               promptText="Type your message..."
+                               promptText="Write a message..."
                                HBox.hgrow="ALWAYS"
                                styleClass="message-field"/>
 
 
-                    <!-- ================================================= -->
                     <!-- SEND BUTTON -->
-                    <!-- ================================================= -->
 
-                    <Button text="SEND"
+                    <Button text="SEND  ➤"
                             onAction="#handleSendMessage"
                             styleClass="send-button"/>
 
@@ -329,10 +387,8 @@
 
             </bottom>
 
-
         </BorderPane>
 
     </center>
-
 
 </BorderPane>

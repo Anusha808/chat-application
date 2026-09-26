@@ -1,51 +1,311 @@
+/* =========================================================
+   CHAT APPLICATION
+   REGISTER PAGE
+   Modern Lavender / Purple Theme
+   ========================================================= */
+
+
+/* =========================================================
+   MAIN REGISTER CONTAINER
+   ========================================================= */
+
 .register-container {
-    -fx-background-color: #f4f7fb;
+    -fx-background-color: linear-gradient(
+        to bottom right,
+        #F8F6FC,
+        #EEEAFD
+    );
+
+    -fx-font-family: "Segoe UI";
+
+    -fx-alignment: CENTER;
 }
+
+
+/* =========================================================
+   TITLE
+   ========================================================= */
 
 .title-label {
+    -fx-text-fill: #5746A8;
+
     -fx-font-size: 28px;
+
     -fx-font-weight: bold;
-    -fx-text-fill: #2563eb;
+
+    -fx-letter-spacing: 1px;
 }
+
+
+/* =========================================================
+   SUBTITLE
+   ========================================================= */
 
 .subtitle-label {
-    -fx-font-size: 18px;
-    -fx-text-fill: #555555;
+    -fx-text-fill: #777184;
+
+    -fx-font-size: 14px;
+
+    -fx-font-weight: normal;
+
+    -fx-padding: 0 0 12px 0;
 }
+
+
+/* =========================================================
+   INPUT FIELDS
+   ========================================================= */
 
 .input-field {
-    -fx-background-color: white;
-    -fx-border-color: #d1d5db;
-    -fx-border-radius: 8px;
-    -fx-background-radius: 8px;
-    -fx-padding: 12px;
+    -fx-background-color: #FFFFFF;
+
+    -fx-border-color: #DDD6ED;
+
+    -fx-border-width: 1px;
+
+    -fx-border-radius: 10px;
+
+    -fx-background-radius: 10px;
+
+    -fx-padding: 11px 14px;
+
+    -fx-text-fill: #302B3D;
+
+    -fx-prompt-text-fill: #A39BAF;
+
     -fx-font-size: 14px;
+
+    -fx-min-height: 42px;
+
+    -fx-max-height: 42px;
+
+    -fx-effect: dropshadow(
+        gaussian,
+        rgba(80, 65, 120, 0.06),
+        6,
+        0.04,
+        0,
+        2
+    );
 }
+
+
+/* =========================================================
+   INPUT HOVER
+   ========================================================= */
+
+.input-field:hover {
+    -fx-background-color: #FFFFFF;
+
+    -fx-border-color: #C8BDE0;
+}
+
+
+/* =========================================================
+   INPUT FOCUS
+   ========================================================= */
 
 .input-field:focused {
-    -fx-border-color: #2563eb;
+    -fx-background-color: #FFFFFF;
+
+    -fx-border-color: #7564CC;
+
+    -fx-border-width: 1.5px;
+
+    -fx-effect: dropshadow(
+        gaussian,
+        rgba(117, 100, 204, 0.20),
+        8,
+        0.06,
+        0,
+        2
+    );
 }
 
+
+/* =========================================================
+   REGISTER BUTTON
+   ========================================================= */
+
 .register-button {
-    -fx-background-color: #2563eb;
-    -fx-text-fill: white;
-    -fx-font-size: 15px;
+    -fx-background-color: linear-gradient(
+        to right,
+        #6D5ACB,
+        #806BD6
+    );
+
+    -fx-text-fill: #FFFFFF;
+
+    -fx-font-size: 14px;
+
     -fx-font-weight: bold;
-    -fx-background-radius: 8px;
-    -fx-padding: 12px;
+
+    -fx-background-radius: 10px;
+
+    -fx-border-radius: 10px;
+
+    -fx-padding: 11px;
+
+    -fx-min-height: 44px;
+
+    -fx-max-height: 44px;
+
+    -fx-cursor: hand;
+
+    -fx-effect: dropshadow(
+        gaussian,
+        rgba(109, 90, 203, 0.28),
+        10,
+        0.08,
+        0,
+        3
+    );
+}
+
+
+/* =========================================================
+   REGISTER BUTTON HOVER
+   ========================================================= */
+
+.register-button:hover {
+    -fx-background-color: linear-gradient(
+        to right,
+        #604DB9,
+        #725DCA
+    );
+
+    -fx-effect: dropshadow(
+        gaussian,
+        rgba(109, 90, 203, 0.38),
+        12,
+        0.08,
+        0,
+        4
+    );
+}
+
+
+/* =========================================================
+   REGISTER BUTTON PRESSED
+   ========================================================= */
+
+.register-button:pressed {
+    -fx-background-color: #5746A8;
+
+    -fx-effect: none;
+}
+
+
+/* =========================================================
+   REGISTER BUTTON DISABLED
+   ========================================================= */
+
+.register-button:disabled {
+    -fx-opacity: 0.55;
+
+    -fx-cursor: default;
+}
+
+
+/* =========================================================
+   MESSAGE LABEL
+   ========================================================= */
+
+.message-label {
+    -fx-text-fill: #C24D65;
+
+    -fx-font-size: 13px;
+
+    -fx-font-weight: 500;
+
+    -fx-alignment: CENTER;
+
+    -fx-text-alignment: CENTER;
+
+    -fx-padding: 4px 0 4px 0;
+}
+
+
+/* =========================================================
+   LOGIN LINK BUTTON
+   ========================================================= */
+
+.login-link-button {
+    -fx-background-color: transparent;
+
+    -fx-text-fill: #6655B8;
+
+    -fx-font-size: 13px;
+
+    -fx-font-weight: bold;
+
+    -fx-padding: 8px 5px;
+
+    -fx-border-color: transparent;
+
+    -fx-border-width: 0;
+
     -fx-cursor: hand;
 }
 
-.register-button:hover {
-    -fx-background-color: #1d4ed8;
+
+/* =========================================================
+   LOGIN LINK HOVER
+   ========================================================= */
+
+.login-link-button:hover {
+    -fx-background-color: transparent;
+
+    -fx-text-fill: #4F3D9B;
+
+    -fx-underline: true;
 }
 
-.message-label {
-    -fx-font-size: 13px;
-    -fx-text-fill: #dc2626;
+
+/* =========================================================
+   LOGIN LINK PRESSED
+   ========================================================= */
+
+.login-link-button:pressed {
+    -fx-background-color: transparent;
+
+    -fx-text-fill: #3F3180;
 }
 
-.login-label {
-    -fx-font-size: 13px;
-    -fx-text-fill: #2563eb;
+
+/* =========================================================
+   LOGIN LINK FOCUS
+   ========================================================= */
+
+.login-link-button:focused {
+    -fx-background-color: transparent;
+
+    -fx-border-color: transparent;
+
+    -fx-effect: none;
 }
+
+
+/* =========================================================
+   GENERAL BUTTON FOCUS
+   ========================================================= */
+
+.register-button:focused {
+    -fx-border-color: #A99BD0;
+
+    -fx-border-width: 1px;
+}
+
+
+/* =========================================================
+   GENERAL LABEL FONT
+   ========================================================= */
+
+.label {
+    -fx-font-family: "Segoe UI";
+}
+
+
+/* =========================================================
+   END OF REGISTER CSS
+   ========================================================= */

@@ -4,9 +4,14 @@ import com.chatapp.dao.UserDAO;
 import com.chatapp.model.User;
 
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import javafx.stage.Stage;
 
 public class RegisterController {
 
@@ -26,6 +31,11 @@ public class RegisterController {
     private Label messageLabel;
 
     private final UserDAO userDAO = new UserDAO();
+
+
+    // =========================================================
+    // REGISTER USER
+    // =========================================================
 
     @FXML
     private void handleRegister() {
@@ -48,6 +58,7 @@ public class RegisterController {
             return;
         }
 
+
         // Check password match
         if (!password.equals(confirmPassword)) {
 
@@ -57,6 +68,7 @@ public class RegisterController {
 
             return;
         }
+
 
         // Check whether username already exists
         if (userDAO.findUserByUsername(username) != null) {
@@ -68,6 +80,7 @@ public class RegisterController {
             return;
         }
 
+
         // Create new user
         User user = new User(
                 username,
@@ -75,7 +88,9 @@ public class RegisterController {
                 password
         );
 
+
         boolean registered = userDAO.registerUser(user);
+
 
         if (registered) {
 
@@ -93,6 +108,106 @@ public class RegisterController {
             messageLabel.setText(
                     "Registration failed. Please try again."
             );
+        }
+    }
+
+
+    // =========================================================
+    // OPEN LOGIN PAGE
+    // =========================================================
+
+    @FXML
+    private void openLoginPage() {
+
+        try {
+
+            System.out.println("Opening Login page...");
+
+
+            // Load login.fxml
+            FXMLLoader loader = new FXMLLoader(
+                    getClass().getResource("/fxml/login.fxml")
+            );
+
+
+            Parent root = loader.load();
+
+
+            // Create new scene
+            Scene scene = new Scene(root);
+
+
+            // Load login CSS
+            var css = getClass().getResource("/css/login.css");
+
+            if (css != null) {
+
+                scene.getStylesheets().add(
+                        css.toExternalForm()
+                );
+
+            } else {
+
+                System.out.println(
+                        "Warning: login.css not found."
+                );
+            }
+
+
+            // Get current window
+            Stage stage =
+                    (Stage) usernameField
+                            .getScene()
+                            .getWindow();
+
+
+            // Change title
+            stage.setTitle(
+                    "Chat Application - Login"
+            );
+
+
+            // Change scene
+            stage.setScene(scene);
+
+
+            // Show login page
+            stage.show();
+
+
+            System.out.println(
+                    "Login page opened successfully."
+            );
+
+
+        } catch (Exception e) {
+
+            System.out.println(
+                    "Unable to open Login page."
+            );
+
+            e.printStackTrace();
+
+
+            // Show error message
+            Alert alert =
+                    new Alert(Alert.AlertType.ERROR);
+
+            alert.setTitle(
+                    "Login Page Error"
+            );
+
+            alert.setHeaderText(
+                    "Unable to open Login page"
+            );
+
+            alert.setContentText(
+                    e.getMessage() != null
+                            ? e.getMessage()
+                            : "Unknown error occurred."
+            );
+
+            alert.showAndWait();
         }
     }
 }

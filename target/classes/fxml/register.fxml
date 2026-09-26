@@ -23,44 +23,54 @@
                 left="40"/>
     </padding>
 
+    <!-- TITLE -->
     <Label text="CREATE ACCOUNT"
            styleClass="title-label"/>
 
+    <!-- SUBTITLE -->
     <Label text="Join Chat Application"
            styleClass="subtitle-label"/>
 
+    <!-- USERNAME -->
     <TextField fx:id="usernameField"
                promptText="Username"
                maxWidth="280"
                styleClass="input-field"/>
 
+    <!-- EMAIL -->
     <TextField fx:id="emailField"
                promptText="Email"
                maxWidth="280"
                styleClass="input-field"/>
 
+    <!-- PASSWORD -->
     <PasswordField fx:id="passwordField"
                    promptText="Password"
                    maxWidth="280"
                    styleClass="input-field"/>
 
+    <!-- CONFIRM PASSWORD -->
     <PasswordField fx:id="confirmPasswordField"
                    promptText="Confirm Password"
                    maxWidth="280"
                    styleClass="input-field"/>
 
+    <!-- REGISTER -->
     <Button text="REGISTER"
             onAction="#handleRegister"
             prefWidth="280"
             styleClass="register-button"/>
 
+    <!-- MESSAGE -->
     <Label fx:id="messageLabel"
            text=""
            wrapText="true"
            maxWidth="280"
            styleClass="message-label"/>
 
-    <Label text="Already have an account? Login"
-           styleClass="login-label"/>
+    <!-- LOGIN LINK -->
+    <Button text="Already have an account? Login"
+            onAction="#openLoginPage"
+            styleClass="login-link-button"/>
 
 </VBox>

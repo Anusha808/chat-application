@@ -1,19 +1,54 @@
 /* =========================================================
-   MAIN CHAT WINDOW
+   MAIN CHAT APPLICATION
    ========================================================= */
 
 .chat-container {
-    -fx-background-color: #f4f7fb;
+    -fx-background-color: #f6f3fa;
+    -fx-font-family: "Segoe UI";
 }
 
 
 /* =========================================================
-   TOP HEADER
+   HEADER
    ========================================================= */
 
 .chat-header {
-    -fx-background-color: #2563eb;
+    -fx-background-color: linear-gradient(
+        to right,
+        #6d5acb,
+        #806bd6
+    );
+
+    -fx-effect: dropshadow(
+        gaussian,
+        rgba(50, 35, 90, 0.18),
+        12,
+        0.15,
+        0,
+        3
+    );
 }
+
+
+/* Logo */
+
+.brand-area {
+    -fx-alignment: center;
+    -fx-background-color: rgba(255,255,255,0.18);
+    -fx-background-radius: 12px;
+    -fx-min-width: 42px;
+    -fx-min-height: 42px;
+    -fx-max-width: 42px;
+    -fx-max-height: 42px;
+}
+
+
+.brand-icon {
+    -fx-font-size: 23px;
+}
+
+
+/* Header title */
 
 .header-title {
     -fx-text-fill: white;
@@ -21,23 +56,78 @@
     -fx-font-weight: bold;
 }
 
-.welcome-label {
-    -fx-text-fill: white;
-    -fx-font-size: 14px;
+
+.header-subtitle {
+    -fx-text-fill: #e9e5ff;
+    -fx-font-size: 11px;
 }
 
-.logout-button {
-    -fx-background-color: white;
-    -fx-text-fill: #2563eb;
+
+/* Welcome */
+
+.welcome-label {
+    -fx-text-fill: #eeeaff;
+    -fx-font-size: 13px;
+    -fx-padding: 0 0 0 10px;
+}
+
+
+/* Header buttons */
+
+.header-button {
+    -fx-background-color: rgba(255,255,255,0.13);
+    -fx-text-fill: white;
+
     -fx-font-size: 12px;
     -fx-font-weight: bold;
-    -fx-background-radius: 6px;
-    -fx-padding: 8px 15px;
+
+    -fx-background-radius: 8px;
+    -fx-border-radius: 8px;
+
+    -fx-border-color: rgba(255,255,255,0.25);
+    -fx-border-width: 1px;
+
+    -fx-padding: 9px 14px;
+
     -fx-cursor: hand;
 }
 
+
+.header-button:hover {
+    -fx-background-color: rgba(255,255,255,0.23);
+}
+
+
+.header-button:pressed {
+    -fx-background-color: rgba(255,255,255,0.30);
+}
+
+
+/* Logout */
+
+.logout-button {
+    -fx-background-color: white;
+    -fx-text-fill: #6654bd;
+
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+
+    -fx-background-radius: 8px;
+    -fx-border-radius: 8px;
+
+    -fx-padding: 9px 15px;
+
+    -fx-cursor: hand;
+}
+
+
 .logout-button:hover {
-    -fx-background-color: #e5e7eb;
+    -fx-background-color: #eeeaff;
+}
+
+
+.logout-button:pressed {
+    -fx-background-color: #e3dcff;
 }
 
 
@@ -46,80 +136,302 @@
    ========================================================= */
 
 .sidebar {
-    -fx-background-color: white;
-    -fx-border-color: #e5e7eb;
+    -fx-background-color: #ffffff;
+
+    -fx-border-color: #e6e0ef;
     -fx-border-width: 0 1px 0 0;
+
+    -fx-effect: dropshadow(
+        gaussian,
+        rgba(70,55,100,0.06),
+        10,
+        0.05,
+        2,
+        0
+    );
 }
 
+
+/* Section title */
+
 .section-title {
-    -fx-font-size: 13px;
+    -fx-font-size: 12px;
     -fx-font-weight: bold;
-    -fx-text-fill: #6b7280;
+    -fx-text-fill: #625a73;
+}
+
+
+.online-dot {
+    -fx-text-fill: #7c6bd6;
+    -fx-font-size: 9px;
 }
 
 
 /* =========================================================
-   USER / GROUP LIST
+   USER SEARCH
+   ========================================================= */
+
+.search-box {
+    -fx-background-color: #f5f2fa;
+
+    -fx-background-radius: 9px;
+    -fx-border-radius: 9px;
+
+    -fx-border-color: #e5dfef;
+    -fx-border-width: 1px;
+
+    -fx-padding: 3px 5px;
+}
+
+
+.search-box:focused-within {
+    -fx-border-color: #806bd6;
+}
+
+
+.search-field {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+
+    -fx-font-size: 13px;
+    -fx-text-fill: #373044;
+
+    -fx-padding: 8px;
+}
+
+
+.search-field:focused {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+}
+
+
+/* Clear user search */
+
+.clear-search-button {
+    -fx-background-color: transparent;
+    -fx-text-fill: #9991aa;
+
+    -fx-font-size: 12px;
+
+    -fx-cursor: hand;
+}
+
+
+.clear-search-button:hover {
+    -fx-text-fill: #6554b9;
+}
+
+
+/* =========================================================
+   USER / GROUP LISTS
    ========================================================= */
 
 .user-list,
 .group-list {
-    -fx-background-color: #f9fafb;
-    -fx-border-color: #e5e7eb;
-    -fx-border-radius: 6px;
-    -fx-background-radius: 6px;
+    -fx-background-color: #faf9fc;
+
+    -fx-border-color: #e6e0ef;
+    -fx-border-width: 1px;
+
+    -fx-border-radius: 10px;
+    -fx-background-radius: 10px;
 }
+
 
 .user-list .list-cell,
 .group-list .list-cell {
-    -fx-padding: 12px;
-    -fx-font-size: 14px;
+    -fx-background-color: transparent;
+
+    -fx-padding: 12px 10px;
+
+    -fx-font-size: 13px;
+    -fx-text-fill: #393345;
 }
+
+
+.user-list .list-cell:hover,
+.group-list .list-cell:hover {
+    -fx-background-color: #f0ecfa;
+}
+
 
 .user-list .list-cell:selected,
 .group-list .list-cell:selected {
-    -fx-background-color: #dbeafe;
-    -fx-text-fill: #1d4ed8;
+    -fx-background-color: #e8e2fb;
+
+    -fx-text-fill: #5b4bb3;
+
+    -fx-font-weight: bold;
 }
 
 
 /* =========================================================
-   CONVERSATION AREA
+   CREATE GROUP BUTTON
+   ========================================================= */
+
+.create-group-button {
+    -fx-background-color: #eee9fb;
+
+    -fx-text-fill: #6352bc;
+
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+
+    -fx-background-radius: 8px;
+
+    -fx-cursor: hand;
+}
+
+
+.create-group-button:hover {
+    -fx-background-color: #ded5f8;
+}
+
+
+.create-group-button:pressed {
+    -fx-background-color: #d2c7f2;
+}
+
+
+/* =========================================================
+   CONVERSATION
    ========================================================= */
 
 .conversation-container {
-    -fx-background-color: #f8fafc;
+    -fx-background-color: #f7f5fb;
 }
+
 
 .conversation-header {
     -fx-background-color: white;
-    -fx-border-color: #e5e7eb;
+
+    -fx-border-color: #e6e0ef;
     -fx-border-width: 0 0 1px 0;
 }
 
+
+.conversation-icon {
+    -fx-background-color: #eee9fb;
+
+    -fx-background-radius: 10px;
+
+    -fx-padding: 8px;
+
+    -fx-font-size: 19px;
+}
+
+
 .chat-title {
-    -fx-font-size: 17px;
+    -fx-font-size: 16px;
     -fx-font-weight: bold;
-    -fx-text-fill: #111827;
+
+    -fx-text-fill: #2f293b;
+}
+
+
+.chat-subtitle {
+    -fx-font-size: 11px;
+    -fx-text-fill: #9992a7;
 }
 
 
 /* =========================================================
-   MESSAGE LIST
+   MESSAGE SEARCH
    ========================================================= */
 
-.message-list {
-    -fx-background-color: #f8fafc;
+.message-search-box {
+    -fx-background-color: #f6f3fa;
+
+    -fx-background-radius: 9px;
+
+    -fx-border-color: #e4deee;
+    -fx-border-radius: 9px;
+    -fx-border-width: 1px;
+
+    -fx-padding: 3px 5px;
+}
+
+
+.message-search-field {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+
+    -fx-font-size: 12px;
+
+    -fx-text-fill: #393244;
+
+    -fx-padding: 7px;
+}
+
+
+.message-search-field:focused {
+    -fx-background-color: transparent;
     -fx-border-color: transparent;
 }
 
-.message-list .list-cell {
+
+.clear-message-search-button {
     -fx-background-color: transparent;
-    -fx-padding: 8px 15px;
+
+    -fx-text-fill: #9c94aa;
+
+    -fx-font-size: 11px;
+
+    -fx-cursor: hand;
 }
 
 
-/* Remove default selected background */
+.clear-message-search-button:hover {
+    -fx-text-fill: #6252b7;
+}
+
+
+/* Members */
+
+.members-button {
+    -fx-background-color: #eee9fb;
+
+    -fx-text-fill: #6252b7;
+
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+
+    -fx-background-radius: 8px;
+
+    -fx-padding: 8px 12px;
+
+    -fx-cursor: hand;
+}
+
+
+.members-button:hover {
+    -fx-background-color: #ded5f8;
+}
+
+
+/* =========================================================
+   MESSAGE AREA
+   ========================================================= */
+
+.message-area {
+    -fx-background-color: #f7f5fb;
+}
+
+
+.message-list {
+    -fx-background-color: #f7f5fb;
+
+    -fx-border-color: transparent;
+}
+
+
+.message-list .list-cell {
+    -fx-background-color: transparent;
+
+    -fx-padding: 8px 16px;
+}
+
 
 .message-list .list-cell:selected {
     -fx-background-color: transparent;
@@ -127,93 +439,86 @@
 
 
 /* =========================================================
-   SENT MESSAGE BUBBLE
+   SENT MESSAGE
    ========================================================= */
 
 .sent-bubble {
-    -fx-background-color: #2563eb;
+    -fx-background-color: linear-gradient(
+        to bottom right,
+        #8877df,
+        #6e5ccc
+    );
 
-    -fx-background-radius:
-        18px 18px 4px 18px;
+    -fx-background-radius: 18px 18px 5px 18px;
 
-    -fx-padding:
-        10px 14px 7px 14px;
+    -fx-padding: 10px 14px 7px 14px;
 
-    -fx-max-width: 400px;
+    -fx-max-width: 420px;
+
+    -fx-effect: dropshadow(
+        gaussian,
+        rgba(90,75,150,0.15),
+        6,
+        0.08,
+        0,
+        2
+    );
 }
 
-
-/* =========================================================
-   RECEIVED MESSAGE BUBBLE
-   ========================================================= */
-
-.received-bubble {
-    -fx-background-color: white;
-
-    -fx-border-color: #e5e7eb;
-
-    -fx-border-width: 1px;
-
-    -fx-background-radius:
-        18px 18px 18px 4px;
-
-    -fx-border-radius:
-        18px 18px 18px 4px;
-
-    -fx-padding:
-        10px 14px 7px 14px;
-
-    -fx-max-width: 400px;
-}
-
-
-/* =========================================================
-   SENT MESSAGE TEXT
-   ========================================================= */
 
 .sent-message {
     -fx-text-fill: white;
 
     -fx-font-size: 14px;
-
-    -fx-font-weight: normal;
 }
 
-
-/* =========================================================
-   RECEIVED MESSAGE TEXT
-   ========================================================= */
-
-.received-message {
-    -fx-text-fill: #111827;
-
-    -fx-font-size: 14px;
-
-    -fx-font-weight: normal;
-}
-
-
-/* =========================================================
-   MESSAGE TIME
-   ========================================================= */
-
-.message-time {
-    -fx-font-size: 10px;
-    -fx-font-weight: normal;
-}
-
-
-/* Sent timestamp */
 
 .sent-bubble .message-time {
-    -fx-text-fill: #dbeafe;
+    -fx-text-fill: #ddd7ff;
+
+    -fx-font-size: 10px;
 }
 
 
-/* Received timestamp */
+/* =========================================================
+   RECEIVED MESSAGE
+   ========================================================= */
+
+.received-bubble {
+    -fx-background-color: white;
+
+    -fx-border-color: #e4deed;
+    -fx-border-width: 1px;
+
+    -fx-background-radius: 18px 18px 18px 5px;
+    -fx-border-radius: 18px 18px 18px 5px;
+
+    -fx-padding: 10px 14px 7px 14px;
+
+    -fx-max-width: 420px;
+
+    -fx-effect: dropshadow(
+        gaussian,
+        rgba(70,55,100,0.08),
+        5,
+        0.06,
+        0,
+        2
+    );
+}
+
+
+.received-message {
+    -fx-text-fill: #35303e;
+
+    -fx-font-size: 14px;
+}
+
 
 .received-bubble .message-time {
-    -fx-text-fill: #9ca3af;
+    -fx-text-fill: #aaa3b2;
+
+    -fx-font-size: 10px;
 }
 
 
@@ -224,34 +529,127 @@
 .message-input-area {
     -fx-background-color: white;
 
-    -fx-border-color: #e5e7eb;
-
+    -fx-border-color: #e5dfed;
     -fx-border-width: 1px 0 0 0;
+
+    -fx-effect: dropshadow(
+        gaussian,
+        rgba(60,45,90,0.08),
+        8,
+        0.05,
+        0,
+        -2
+    );
 }
 
 
 /* =========================================================
-   MESSAGE TEXT FIELD
+   UPLOAD BUTTON
+   SAME STYLE / POSITION AS PREVIOUS VERSION
    ========================================================= */
 
-.message-field {
-    -fx-background-color: #f3f4f6;
+.attachment-button {
+    -fx-background-color: #f1edf9;
 
-    -fx-border-color: #d1d5db;
+    -fx-text-fill: #6252b7;
 
-    -fx-border-radius: 10px;
+    -fx-font-size: 19px;
 
     -fx-background-radius: 10px;
 
-    -fx-padding: 12px;
+    -fx-border-color: #e1daed;
+    -fx-border-width: 1px;
+    -fx-border-radius: 10px;
 
-    -fx-font-size: 14px;
+    -fx-cursor: hand;
 }
 
-.message-field:focused {
-    -fx-border-color: #2563eb;
 
+.attachment-button:hover {
+    -fx-background-color: #e7e0f6;
+
+    -fx-border-color: #cfc4e6;
+}
+
+
+.attachment-button:pressed {
+    -fx-background-color: #dcd2f1;
+}
+
+
+/* =========================================================
+   EMOJI BUTTON
+   SAME STYLE / POSITION AS PREVIOUS VERSION
+   ========================================================= */
+
+.emoji-button {
+    -fx-background-color: #f1edf9;
+
+    -fx-text-fill: #6252b7;
+
+    -fx-font-size: 19px;
+
+    -fx-background-radius: 10px;
+
+    -fx-border-color: #e1daed;
+    -fx-border-width: 1px;
+    -fx-border-radius: 10px;
+
+    -fx-cursor: hand;
+}
+
+
+.emoji-button:hover {
+    -fx-background-color: #e7e0f6;
+
+    -fx-border-color: #cfc4e6;
+}
+
+
+.emoji-button:pressed {
+    -fx-background-color: #dcd2f1;
+}
+
+
+/* =========================================================
+   MESSAGE FIELD
+   ========================================================= */
+
+.message-field {
+    -fx-background-color: #f5f2f9;
+
+    -fx-border-color: #e1dbe9;
+    -fx-border-width: 1px;
+
+    -fx-border-radius: 10px;
+    -fx-background-radius: 10px;
+
+    -fx-padding: 11px 14px;
+
+    -fx-font-size: 14px;
+
+    -fx-text-fill: #342e3d;
+}
+
+
+.message-field:hover {
+    -fx-border-color: #cfc6df;
+}
+
+
+.message-field:focused {
     -fx-background-color: white;
+
+    -fx-border-color: #7968d4;
+
+    -fx-effect: dropshadow(
+        gaussian,
+        rgba(121,104,212,0.18),
+        6,
+        0.05,
+        0,
+        1
+    );
 }
 
 
@@ -260,25 +658,83 @@
    ========================================================= */
 
 .send-button {
-    -fx-background-color: #2563eb;
+    -fx-background-color: #6d5acb;
 
     -fx-text-fill: white;
 
     -fx-font-size: 13px;
-
     -fx-font-weight: bold;
 
     -fx-background-radius: 10px;
 
-    -fx-padding: 12px 20px;
+    -fx-padding: 11px 21px;
 
     -fx-cursor: hand;
 }
 
+
 .send-button:hover {
-    -fx-background-color: #1d4ed8;
+    -fx-background-color: #5f4fba;
 }
 
+
 .send-button:pressed {
-    -fx-background-color: #1e40af;
+    -fx-background-color: #5041a5;
+}
+
+
+/* =========================================================
+   SCROLLBARS
+   ========================================================= */
+
+.user-list .scroll-bar:vertical,
+.group-list .scroll-bar:vertical,
+.message-list .scroll-bar:vertical {
+    -fx-background-color: transparent;
+
+    -fx-pref-width: 9px;
+}
+
+
+.user-list .scroll-bar:vertical .track,
+.group-list .scroll-bar:vertical .track,
+.message-list .scroll-bar:vertical .track {
+    -fx-background-color: transparent;
+}
+
+
+.user-list .scroll-bar:vertical .thumb,
+.group-list .scroll-bar:vertical .thumb,
+.message-list .scroll-bar:vertical .thumb {
+    -fx-background-color: #c9c1dc;
+
+    -fx-background-radius: 10px;
+}
+
+
+.user-list .scroll-bar:vertical .thumb:hover,
+.group-list .scroll-bar:vertical .thumb:hover,
+.message-list .scroll-bar:vertical .thumb:hover {
+    -fx-background-color: #a99dc5;
+}
+
+
+.user-list .scroll-bar:vertical .increment-button,
+.user-list .scroll-bar:vertical .decrement-button,
+.group-list .scroll-bar:vertical .increment-button,
+.group-list .scroll-bar:vertical .decrement-button,
+.message-list .scroll-bar:vertical .increment-button,
+.message-list .scroll-bar:vertical .decrement-button {
+    -fx-pref-height: 0;
+    -fx-padding: 0;
+}
+
+
+.user-list .scroll-bar:vertical .increment-arrow,
+.user-list .scroll-bar:vertical .decrement-arrow,
+.group-list .scroll-bar:vertical .increment-arrow,
+.group-list .scroll-bar:vertical .decrement-arrow,
+.message-list .scroll-bar:vertical .increment-arrow,
+.message-list .scroll-bar:vertical .decrement-arrow {
+    -fx-padding: 0;
 }
