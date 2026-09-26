@@ -1,7 +1,7 @@
 /* =========================================================
    CHAT APPLICATION
    MY PROFILE PAGE
-   Modern Lavender / Purple Theme
+   MODERN LAVENDER / PURPLE THEME
    ========================================================= */
 
 
@@ -10,7 +10,7 @@
    ========================================================= */
 
 .profile-container {
-    -fx-background-color: #FAF9FF;
+    -fx-background-color: #F8F7FC;
     -fx-font-family: "Segoe UI";
 }
 
@@ -22,16 +22,15 @@
 .profile-header {
     -fx-background-color: #FFFFFF;
 
-    -fx-border-color: #E8E3F0;
-
+    -fx-border-color: #E6E1EE;
     -fx-border-width: 0 0 1px 0;
 
-    -fx-padding: 18px 25px;
+    -fx-padding: 16px 25px;
 
     -fx-effect: dropshadow(
         gaussian,
-        rgba(60, 45, 90, 0.08),
-        10,
+        rgba(70, 55, 95, 0.08),
+        12,
         0.05,
         0,
         2
@@ -40,7 +39,7 @@
 
 
 /* =========================================================
-   PROFILE HEADER TITLE
+   HEADER TITLE
    ========================================================= */
 
 .profile-header-title {
@@ -53,39 +52,118 @@
 
 
 /* =========================================================
-   BACK TO CHAT BUTTON
+   BACK BUTTON
    ========================================================= */
 
 .back-button {
-    -fx-background-color: transparent;
+    -fx-background-color: #F3EFFA;
 
-    -fx-text-fill: #8B72BE;
+    -fx-text-fill: #7657AE;
 
-    -fx-font-size: 28px;
+    -fx-font-size: 14px;
 
     -fx-font-weight: bold;
 
     -fx-background-radius: 10px;
 
+    -fx-border-color: #E1D7ED;
+
+    -fx-border-width: 1px;
+
     -fx-border-radius: 10px;
 
-    -fx-padding: 0 8px;
+    -fx-padding: 9px 15px;
+
+    -fx-min-height: 40px;
+
+    -fx-pref-height: 40px;
 
     -fx-cursor: hand;
+
+    -fx-effect: dropshadow(
+        gaussian,
+        rgba(100, 75, 145, 0.10),
+        7,
+        0.04,
+        0,
+        2
+    );
 }
 
+
+/* BACK BUTTON HOVER */
 
 .back-button:hover {
-    -fx-background-color: #F1ECFA;
+    -fx-background-color: #EAE2F6;
 
-    -fx-text-fill: #7258A8;
+    -fx-text-fill: #62469A;
+
+    -fx-border-color: #CDBEE3;
+
+    -fx-effect: dropshadow(
+        gaussian,
+        rgba(100, 75, 145, 0.18),
+        10,
+        0.06,
+        0,
+        3
+    );
 }
 
 
-.back-button:pressed {
-    -fx-background-color: #E4DBF3;
+/* BACK BUTTON PRESSED */
 
-    -fx-text-fill: #604A96;
+.back-button:pressed {
+    -fx-background-color: #DDD0ED;
+
+    -fx-text-fill: #523C84;
+
+    -fx-effect: none;
+}
+
+
+/* BACK BUTTON FOCUS */
+
+.back-button:focused {
+    -fx-background-color: #F3EFFA;
+
+    -fx-border-color: #B9A5D8;
+
+    -fx-border-width: 1px;
+
+    -fx-effect: dropshadow(
+        gaussian,
+        rgba(139, 114, 190, 0.18),
+        7,
+        0.05,
+        0,
+        2
+    );
+}
+
+
+/* =========================================================
+   PROFILE SCROLL
+   ========================================================= */
+
+.profile-scroll {
+    -fx-background-color: transparent;
+
+    -fx-border-color: transparent;
+}
+
+
+.profile-scroll > .viewport {
+    -fx-background-color: #F8F7FC;
+}
+
+
+/* =========================================================
+   PROFILE CONTENT
+   ========================================================= */
+
+.profile-content {
+    -fx-background-color: transparent;
 }
 
 
@@ -98,17 +176,17 @@
 
     -fx-background-radius: 18px;
 
-    -fx-border-color: #E8E3F0;
+    -fx-border-color: #E7E1EF;
 
     -fx-border-width: 1px;
 
     -fx-border-radius: 18px;
 
-    -fx-padding: 35px;
+    -fx-padding: 32px;
 
     -fx-effect: dropshadow(
         gaussian,
-        rgba(60, 45, 90, 0.11),
+        rgba(66, 48, 96, 0.10),
         20,
         0.08,
         0,
@@ -118,16 +196,59 @@
 
 
 /* =========================================================
-   PROFILE AVATAR
+   PROFILE CARD HOVER
    ========================================================= */
 
-.profile-avatar {
-    -fx-fill: #B8A7D9;
+.profile-card:hover {
+    -fx-effect: dropshadow(
+        gaussian,
+        rgba(66, 48, 96, 0.14),
+        24,
+        0.08,
+        0,
+        6
+    );
 }
 
 
 /* =========================================================
-   AVATAR LETTER
+   PROFILE AVATAR
+   ========================================================= */
+
+.profile-avatar {
+    -fx-background-color: #B7A5D8;
+
+    -fx-background-radius: 60px;
+
+    -fx-min-width: 110px;
+
+    -fx-min-height: 110px;
+
+    -fx-max-width: 110px;
+
+    -fx-max-height: 110px;
+
+    -fx-alignment: CENTER;
+
+    -fx-text-fill: #FFFFFF;
+
+    -fx-font-size: 40px;
+
+    -fx-font-weight: bold;
+
+    -fx-effect: dropshadow(
+        gaussian,
+        rgba(110, 85, 160, 0.20),
+        12,
+        0.06,
+        0,
+        3
+    );
+}
+
+
+/* =========================================================
+   AVATAR LABEL
    ========================================================= */
 
 .avatar-label {
@@ -153,16 +274,20 @@
 
 
 /* =========================================================
-   ONLINE STATUS DOT
+   STATUS DOT
    ========================================================= */
 
 .status-dot {
-    -fx-fill: #55A66B;
+    -fx-text-fill: #55A66B;
+
+    -fx-font-size: 13px;
+
+    -fx-font-weight: bold;
 }
 
 
 /* =========================================================
-   ONLINE STATUS TEXT
+   STATUS LABEL
    ========================================================= */
 
 .status-label {
@@ -175,7 +300,7 @@
 
 
 /* =========================================================
-   PROFILE INFORMATION SECTION
+   PROFILE INFORMATION AREA
    ========================================================= */
 
 .profile-info {
@@ -184,7 +309,81 @@
 
 
 /* =========================================================
-   FIELD LABEL
+   INFORMATION ROW
+   IMPORTANT: FIXED ALIGNMENT
+   ========================================================= */
+
+.info-row {
+    -fx-background-color: #FAF9FF;
+
+    -fx-background-radius: 10px;
+
+    -fx-border-color: #E5DFED;
+
+    -fx-border-width: 1px;
+
+    -fx-border-radius: 10px;
+
+    -fx-padding: 12px 16px;
+
+    -fx-spacing: 10px;
+
+    -fx-alignment: CENTER_LEFT;
+
+    -fx-pref-width: 500px;
+
+    -fx-min-width: 500px;
+
+    -fx-max-width: 500px;
+}
+
+
+/* =========================================================
+   INFORMATION TITLE
+   FIXED WIDTH FOR PERFECT ALIGNMENT
+   ========================================================= */
+
+.info-title {
+    -fx-text-fill: #777184;
+
+    -fx-font-size: 13px;
+
+    -fx-font-weight: bold;
+
+    -fx-min-width: 100px;
+
+    -fx-pref-width: 100px;
+
+    -fx-max-width: 100px;
+}
+
+
+/* =========================================================
+   INFORMATION VALUE
+   ========================================================= */
+
+.info-value {
+    -fx-text-fill: #302B3D;
+
+    -fx-font-size: 14px;
+
+    -fx-font-weight: 500;
+
+    -fx-padding: 0 0 0 8px;
+}
+
+
+/* =========================================================
+   INFORMATION VALUE HOVER
+   ========================================================= */
+
+.info-value:hover {
+    -fx-text-fill: #624C9D;
+}
+
+
+/* =========================================================
+   GENERAL FIELD LABEL
    ========================================================= */
 
 .info-label {
@@ -197,43 +396,47 @@
 
 
 /* =========================================================
-   USERNAME / EMAIL FIELDS
+   PROFILE TEXT FIELD
    ========================================================= */
 
 .profile-field {
     -fx-background-color: #FAF9FF;
 
-    -fx-border-color: #E8E3F0;
+    -fx-border-color: #E5DFED;
 
     -fx-border-width: 1px;
 
-    -fx-border-radius: 8px;
+    -fx-border-radius: 10px;
 
-    -fx-background-radius: 8px;
+    -fx-background-radius: 10px;
 
-    -fx-padding: 11px 12px;
+    -fx-padding: 11px 13px;
 
     -fx-text-fill: #302B3D;
 
     -fx-font-size: 14px;
 
-    -fx-prompt-text-fill: #A8A1B0;
+    -fx-prompt-text-fill: #AAA2B1;
+
+    -fx-pref-height: 42px;
+
+    -fx-min-height: 42px;
 }
 
 
 /* =========================================================
-   FIELD HOVER
+   TEXT FIELD HOVER
    ========================================================= */
 
 .profile-field:hover {
     -fx-background-color: #FFFFFF;
 
-    -fx-border-color: #CBBDE0;
+    -fx-border-color: #CDBEE1;
 }
 
 
 /* =========================================================
-   FIELD FOCUS
+   TEXT FIELD FOCUS
    ========================================================= */
 
 .profile-field:focused {
@@ -246,7 +449,7 @@
     -fx-effect: dropshadow(
         gaussian,
         rgba(139, 114, 190, 0.18),
-        8,
+        9,
         0.06,
         0,
         2
@@ -255,13 +458,15 @@
 
 
 /* =========================================================
-   READ-ONLY FIELD
+   DISABLED / READ ONLY FIELD
    ========================================================= */
 
 .profile-field:disabled {
     -fx-opacity: 1.0;
 
     -fx-background-color: #FAF9FF;
+
+    -fx-border-color: #E5DFED;
 
     -fx-text-fill: #302B3D;
 }
@@ -272,7 +477,11 @@
    ========================================================= */
 
 .edit-profile-button {
-    -fx-background-color: #8B72BE;
+    -fx-background-color: linear-gradient(
+        to right,
+        #8066BD,
+        #9579CF
+    );
 
     -fx-text-fill: #FFFFFF;
 
@@ -280,49 +489,53 @@
 
     -fx-font-weight: bold;
 
-    -fx-background-radius: 9px;
+    -fx-background-radius: 10px;
 
-    -fx-border-radius: 9px;
+    -fx-border-radius: 10px;
 
-    -fx-padding: 10px 18px;
+    -fx-padding: 11px 22px;
+
+    -fx-min-height: 42px;
+
+    -fx-pref-height: 42px;
 
     -fx-cursor: hand;
 
     -fx-effect: dropshadow(
         gaussian,
-        rgba(139, 114, 190, 0.22),
-        8,
+        rgba(128, 102, 189, 0.24),
+        9,
         0.07,
-        0,
-        2
-    );
-}
-
-
-/* =========================================================
-   EDIT PROFILE HOVER
-   ========================================================= */
-
-.edit-profile-button:hover {
-    -fx-background-color: #795FAC;
-
-    -fx-effect: dropshadow(
-        gaussian,
-        rgba(139, 114, 190, 0.30),
-        10,
-        0.08,
         0,
         3
     );
 }
 
 
-/* =========================================================
-   EDIT PROFILE PRESSED
-   ========================================================= */
+/* EDIT HOVER */
+
+.edit-profile-button:hover {
+    -fx-background-color: linear-gradient(
+        to right,
+        #7155AF,
+        #886AC5
+    );
+
+    -fx-effect: dropshadow(
+        gaussian,
+        rgba(128, 102, 189, 0.32),
+        12,
+        0.08,
+        0,
+        4
+    );
+}
+
+
+/* EDIT PRESSED */
 
 .edit-profile-button:pressed {
-    -fx-background-color: #684E9B;
+    -fx-background-color: #62489D;
 
     -fx-effect: none;
 }
@@ -333,26 +546,34 @@
    ========================================================= */
 
 .change-password-button {
-    -fx-background-color: #B8A7D9;
+    -fx-background-color: #EEE8F7;
 
-    -fx-text-fill: #302B3D;
+    -fx-text-fill: #624C9D;
 
     -fx-font-size: 14px;
 
     -fx-font-weight: bold;
 
-    -fx-background-radius: 9px;
+    -fx-background-radius: 10px;
 
-    -fx-border-radius: 9px;
+    -fx-border-color: #DDD2EC;
 
-    -fx-padding: 10px 18px;
+    -fx-border-width: 1px;
+
+    -fx-border-radius: 10px;
+
+    -fx-padding: 11px 20px;
+
+    -fx-min-height: 42px;
+
+    -fx-pref-height: 42px;
 
     -fx-cursor: hand;
 
     -fx-effect: dropshadow(
         gaussian,
-        rgba(120, 95, 160, 0.12),
-        6,
+        rgba(100, 75, 145, 0.09),
+        7,
         0.05,
         0,
         2
@@ -360,34 +581,66 @@
 }
 
 
-/* =========================================================
-   CHANGE PASSWORD HOVER
-   ========================================================= */
+/* PASSWORD HOVER */
 
 .change-password-button:hover {
-    -fx-background-color: #A997CE;
+    -fx-background-color: #E3D9F1;
 
-    -fx-text-fill: #292332;
+    -fx-border-color: #CDBEE1;
 
-    -fx-effect: dropshadow(
-        gaussian,
-        rgba(120, 95, 160, 0.20),
-        8,
-        0.06,
-        0,
-        2
-    );
+    -fx-text-fill: #533D88;
+}
+
+
+/* PASSWORD PRESSED */
+
+.change-password-button:pressed {
+    -fx-background-color: #D8CBEA;
+
+    -fx-effect: none;
 }
 
 
 /* =========================================================
-   CHANGE PASSWORD PRESSED
+   PRIMARY BUTTON
    ========================================================= */
 
-.change-password-button:pressed {
-    -fx-background-color: #9985BF;
+.primary-button {
+    -fx-background-color: linear-gradient(
+        to right,
+        #8066BD,
+        #9579CF
+    );
 
-    -fx-effect: none;
+    -fx-text-fill: #FFFFFF;
+
+    -fx-font-size: 13px;
+
+    -fx-font-weight: bold;
+
+    -fx-background-radius: 10px;
+
+    -fx-border-radius: 10px;
+
+    -fx-padding: 10px 18px;
+
+    -fx-min-height: 42px;
+
+    -fx-cursor: hand;
+}
+
+
+.primary-button:hover {
+    -fx-background-color: linear-gradient(
+        to right,
+        #7155AF,
+        #886AC5
+    );
+}
+
+
+.primary-button:pressed {
+    -fx-background-color: #62489D;
 }
 
 
@@ -396,7 +649,7 @@
    ========================================================= */
 
 .secondary-button {
-    -fx-background-color: #F0EDF6;
+    -fx-background-color: #F2EFF6;
 
     -fx-text-fill: #5E566B;
 
@@ -404,69 +657,36 @@
 
     -fx-font-weight: bold;
 
-    -fx-background-radius: 9px;
+    -fx-background-radius: 10px;
 
-    -fx-border-color: #DED7E8;
+    -fx-border-color: #DED6E7;
 
     -fx-border-width: 1px;
 
-    -fx-border-radius: 9px;
+    -fx-border-radius: 10px;
 
     -fx-padding: 10px 18px;
+
+    -fx-min-height: 42px;
 
     -fx-cursor: hand;
 }
 
 
 .secondary-button:hover {
-    -fx-background-color: #E6E0EF;
+    -fx-background-color: #E8E2EF;
 
-    -fx-text-fill: #4E465D;
+    -fx-text-fill: #4D465A;
 }
 
 
 .secondary-button:pressed {
-    -fx-background-color: #DCD4E6;
-}
-
-
-/* =========================================================
-   PRIMARY BUTTON
-   Useful for future profile edit section
-   ========================================================= */
-
-.primary-button {
-    -fx-background-color: #8B72BE;
-
-    -fx-text-fill: #FFFFFF;
-
-    -fx-font-size: 13px;
-
-    -fx-font-weight: bold;
-
-    -fx-background-radius: 9px;
-
-    -fx-border-radius: 9px;
-
-    -fx-padding: 10px 18px;
-
-    -fx-cursor: hand;
-}
-
-
-.primary-button:hover {
-    -fx-background-color: #795FAC;
-}
-
-
-.primary-button:pressed {
-    -fx-background-color: #684E9B;
+    -fx-background-color: #DDD5E5;
 }
 
 
 /* =========================================================
    PASSWORD BUTTON
-   Useful for future password section
    ========================================================= */
 
 .password-button {
@@ -478,15 +698,17 @@
 
     -fx-font-weight: bold;
 
-    -fx-background-radius: 9px;
+    -fx-background-radius: 10px;
 
     -fx-border-color: #DCD2ED;
 
     -fx-border-width: 1px;
 
-    -fx-border-radius: 9px;
+    -fx-border-radius: 10px;
 
     -fx-padding: 10px 18px;
+
+    -fx-min-height: 42px;
 
     -fx-cursor: hand;
 }
@@ -514,8 +736,6 @@
     -fx-font-size: 13px;
 
     -fx-font-weight: bold;
-
-    -fx-letter-spacing: 0.5px;
 }
 
 
@@ -528,7 +748,7 @@
 
     -fx-background-radius: 14px;
 
-    -fx-border-color: #E8E3F0;
+    -fx-border-color: #E8E2EF;
 
     -fx-border-width: 1px;
 
@@ -539,7 +759,7 @@
 
 
 /* =========================================================
-   FIELD LABELS
+   FORM FIELD LABEL
    ========================================================= */
 
 .field-label {
@@ -561,30 +781,80 @@
 
 
 .separator .line {
-    -fx-border-color: #E8E3F0;
+    -fx-border-color: #E7E1ED;
 
     -fx-border-width: 1px 0 0 0;
 }
 
 
 /* =========================================================
-   PROFILE CARD HOVER
+   PROFILE FOOTER
    ========================================================= */
 
-.profile-card:hover {
-    -fx-effect: dropshadow(
-        gaussian,
-        rgba(60, 45, 90, 0.14),
-        22,
-        0.08,
-        0,
-        6
-    );
+.profile-footer {
+    -fx-background-color: #FFFFFF;
+
+    -fx-border-color: #E6E1EE;
+
+    -fx-border-width: 1px 0 0 0;
+}
+
+
+.footer-text {
+    -fx-text-fill: #9A92A5;
+
+    -fx-font-size: 12px;
 }
 
 
 /* =========================================================
-   BUTTON DISABLED STATE
+   SCROLLBAR
+   ========================================================= */
+
+.profile-scroll .scroll-bar:vertical {
+    -fx-background-color: transparent;
+
+    -fx-pref-width: 9px;
+}
+
+
+.profile-scroll .scroll-bar:vertical .track {
+    -fx-background-color: #F0EDF5;
+
+    -fx-background-radius: 10px;
+}
+
+
+.profile-scroll .scroll-bar:vertical .thumb {
+    -fx-background-color: #C5B9DA;
+
+    -fx-background-radius: 10px;
+}
+
+
+.profile-scroll .scroll-bar:vertical .thumb:hover {
+    -fx-background-color: #A895C6;
+}
+
+
+.profile-scroll .scroll-bar:vertical .increment-button,
+.profile-scroll .scroll-bar:vertical .decrement-button {
+    -fx-background-color: transparent;
+
+    -fx-padding: 0;
+
+    -fx-pref-height: 0;
+}
+
+
+.profile-scroll .scroll-bar:vertical .increment-arrow,
+.profile-scroll .scroll-bar:vertical .decrement-arrow {
+    -fx-padding: 0;
+}
+
+
+/* =========================================================
+   BUTTON DISABLED
    ========================================================= */
 
 .edit-profile-button:disabled,
@@ -596,96 +866,3 @@
 
     -fx-cursor: default;
 }
-
-
-/* =========================================================
-   TEXT FIELD DISABLED STATE
-   ========================================================= */
-
-.profile-field:disabled {
-    -fx-opacity: 1.0;
-
-    -fx-background-color: #FAF9FF;
-
-    -fx-border-color: #E8E3F0;
-
-    -fx-text-fill: #302B3D;
-}
-
-
-/* =========================================================
-   FOCUS OUTLINE
-   ========================================================= */
-
-.button:focused {
-    -fx-effect: dropshadow(
-        gaussian,
-        rgba(139, 114, 190, 0.22),
-        6,
-        0.05,
-        0,
-        1
-    );
-}
-
-
-/* =========================================================
-   SCROLLBAR
-   For future ScrollPane usage
-   ========================================================= */
-
-.scroll-pane {
-    -fx-background-color: #FAF9FF;
-
-    -fx-border-color: transparent;
-}
-
-
-.scroll-pane > .viewport {
-    -fx-background-color: #FAF9FF;
-}
-
-
-.scroll-pane .scroll-bar:vertical {
-    -fx-background-color: transparent;
-
-    -fx-pref-width: 9px;
-}
-
-
-.scroll-pane .scroll-bar:vertical .track {
-    -fx-background-color: #F0EDF5;
-
-    -fx-background-radius: 10px;
-}
-
-
-.scroll-pane .scroll-bar:vertical .thumb {
-    -fx-background-color: #C7BBDD;
-
-    -fx-background-radius: 10px;
-}
-
-
-.scroll-pane .scroll-bar:vertical .thumb:hover {
-    -fx-background-color: #AFA0C9;
-}
-
-
-.scroll-pane .scroll-bar:vertical .increment-button,
-.scroll-pane .scroll-bar:vertical .decrement-button {
-    -fx-pref-height: 0;
-
-    -fx-padding: 0;
-}
-
-
-.scroll-pane .scroll-bar:vertical .increment-arrow,
-.scroll-pane .scroll-bar:vertical .decrement-arrow {
-    -fx-padding: 0;
-}
-
-
-/* =========================================================
-   END
-   ========================================================= */
